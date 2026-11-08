@@ -34,7 +34,7 @@
         <span>/</span>
         <button type="button" class="lang-button" data-lang="es" aria-pressed="false">ES</button>
       </div>
-      <a class="button button-small" href="#contacte" data-i18n="navCta">Demana cita</a>
+      <button class="button button-small" type="button" data-open-booking data-i18n="navCta">Demana cita</button>
     </div>
   </header>
 
@@ -116,5 +116,28 @@
       </footer>
     </section>
   </main>
+
+  <div class="booking-overlay" id="bookingModal" hidden>
+    <section class="booking-dialog" role="dialog" aria-modal="true" aria-labelledby="bookingTitle">
+      <button class="booking-close" type="button" data-close-booking aria-label="Tancar">×</button>
+      <p class="eyebrow" data-i18n="bookingEyebrow">UN PRIMER CONTACTE</p>
+      <h2 id="bookingTitle" data-i18n="bookingTitle">Demana una cita</h2>
+      <p class="booking-intro" data-i18n="bookingIntro">Explica’m breument com et puc ajudar i em posaré en contacte amb tu.</p>
+      <form class="booking-form">
+        <label for="bookingName" data-i18n="bookingName">Nom i cognoms</label>
+        <input id="bookingName" name="name" autocomplete="name" required>
+        <label for="bookingEmail" data-i18n="bookingEmail">Correu electrònic</label>
+        <input id="bookingEmail" name="email" type="email" autocomplete="email" required>
+        <label for="bookingReason" data-i18n="bookingReason">Motiu de consulta (resum breu)</label>
+        <textarea id="bookingReason" name="reason" rows="3" data-i18n-placeholder="bookingReasonPlaceholder" placeholder="Pots explicar breument què t’agradaria treballar..."></textarea>
+        <p class="booking-privacy" data-i18n="bookingPrivacy">No cal que comparteixis informació íntima ni detalls personals en aquest primer contacte.</p>
+      </form>
+      <div class="booking-availability">
+        <span class="availability-icon">◷</span>
+        <div><strong data-i18n="bookingAvailabilityTitle">Triarem l’hora que et vagi bé</strong><p data-i18n="bookingAvailabilityText">La disponibilitat en temps real s’activarà quan connectem el calendari de la consulta.</p></div>
+      </div>
+      <p class="booking-coming" data-i18n="bookingComing">Les sol·licituds i reserves en línia estaran disponibles properament.</p>
+    </section>
+  </div>
 </body>
 </html>
