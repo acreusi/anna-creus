@@ -2,3 +2,26 @@
 @media(max-width:1050px){.site-header{padding:0 5vw}.main-nav{gap:15px}.main-nav a{font-size:12px}.header-actions{gap:13px}.section-wrap{padding-left:8vw;padding-right:8vw}.hero{padding-left:8vw}.hero-bottom{left:8vw;right:8vw}.hero-art{width:48vw}.intro,.services-section .section-wrap,.method-section{grid-template-columns:.7fr 3fr}}
 @media(max-width:760px){html{scroll-padding-top:72px}.site-header{height:72px;padding:0 6vw}.brand{min-width:0}.brand-name{font-size:19px}.menu-toggle{display:block;border:0;background:none;padding:8px;order:3}.header-actions{margin-left:auto;margin-right:12px}.header-actions .button{display:none}.main-nav{display:none;position:absolute;top:72px;left:0;right:0;padding:22px 7vw 28px;background:var(--paper);border-bottom:1px solid var(--line);flex-direction:column;align-items:flex-start;gap:18px}.main-nav.open{display:flex}.main-nav a{font-size:14px}.hero{height:auto;min-height:760px;padding:80px 7vw 120px;align-items:flex-start}.hero-copy{padding-top:10px}.hero h1{font-size:clamp(43px,12vw,62px);letter-spacing:-1.8px}.hero-lead{font-size:14px;max-width:390px}.hero-art{top:auto;bottom:0;width:75%;height:37%;opacity:.9}.art-caption{font-size:8px}.hero-bottom{left:7vw;right:7vw;bottom:25px}.intro,.method-section{display:block;padding:85px 7vw}.intro-content,.method-content{margin-top:48px}.intro h2,.method-content>h2{font-size:37px;letter-spacing:-1.5px}.intro-bottom{display:block}.intro-bottom p{font-size:13px}.intro-bottom .text-link{display:inline-block;margin-top:25px}.services-section{padding:80px 0}.services-section .section-wrap{display:block;padding-left:7vw;padding-right:7vw}.services-heading{display:block;margin-top:45px}.services-heading h2{font-size:36px;letter-spacing:-1.5px}.services-heading>p{margin-top:22px}.service-list{margin-top:38px}.service-item{grid-template-columns:28px 1fr 20px;gap:10px;padding:19px 0}.service-item h3{font-size:17px}.small-note{font-size:10px}.method-content{margin-top:45px}.method-grid{grid-template-columns:1fr;gap:28px;margin-top:50px}.method-grid>div{padding-top:15px}.method-grid h3{margin:12px 0 5px}.contact-section{padding-top:75px}.contact-inner{padding-bottom:85px}.contact-inner .eyebrow{margin-top:45px}.contact-inner h2{font-size:45px;letter-spacing:-1.7px}.contact-copy{font-size:13px}.site-footer{padding:25px 7vw;display:grid;grid-template-columns:1fr 1fr;gap:20px}.site-footer>span:nth-child(2){grid-column:1/-1;grid-row:2}.site-footer>span:last-child{text-align:right}.footer-brand .brand-name{font-size:16px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
+
+/* Booking request modal */
+.button-small{cursor:pointer;font-family:inherit}
+.booking-overlay{position:fixed;inset:0;z-index:30;background:rgba(25,32,32,.48);display:grid;place-items:center;padding:24px;backdrop-filter:blur(5px)}
+.booking-overlay[hidden]{display:none}
+.booking-dialog{position:relative;width:min(100%,540px);max-height:min(88vh,800px);overflow:auto;background:var(--paper);padding:clamp(28px,5vw,48px);box-shadow:0 24px 80px rgba(0,0,0,.2);border-radius:16px}
+.booking-close{position:absolute;right:20px;top:16px;border:0;background:none;font-size:30px;line-height:1;color:#667172;cursor:pointer;padding:5px 9px}
+.booking-dialog .eyebrow{margin:0 35px 12px 0}
+.booking-dialog h2{font-family:var(--serif);font-size:clamp(32px,5vw,43px);font-weight:500;letter-spacing:-1.5px;line-height:1.15;margin:0 0 12px}
+.booking-intro{font-size:14px;color:#657071;line-height:1.8;margin:0 0 25px}
+.booking-form{display:grid;gap:8px}
+.booking-form label{font-size:12px;font-weight:600;margin-top:7px}
+.booking-form input,.booking-form textarea{width:100%;border:1px solid var(--line);border-radius:7px;background:#fff;padding:12px 13px;font:inherit;font-size:14px;color:var(--ink);outline:none}
+.booking-form input:focus,.booking-form textarea:focus{border-color:#78999b;box-shadow:0 0 0 3px rgba(196,216,217,.45)}
+.booking-form textarea{resize:vertical;min-height:88px}
+.booking-privacy{font-size:11px;line-height:1.6;color:#7b8585;margin:0 0 5px}
+.booking-availability{display:flex;gap:14px;align-items:flex-start;background:#edf2ef;padding:15px;border-radius:9px;margin-top:22px}
+.availability-icon{font-size:23px;color:#6d8586}
+.booking-availability strong{font-size:13px}
+.booking-availability p{font-size:11px;color:#687474;line-height:1.6;margin:4px 0 0}
+.booking-coming{font-size:11px;color:#879293;text-align:center;line-height:1.6;margin:17px 0 0}
+body.booking-open{overflow:hidden}
+@media(max-width:760px){.booking-overlay{padding:12px}.booking-dialog{padding:30px 23px;border-radius:13px;max-height:92vh}}
