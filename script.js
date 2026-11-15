@@ -297,12 +297,13 @@ if (bookingForm) {
     if (!chosenSlotIso) return;
     const name = document.getElementById("bookingName").value.trim();
     const email = document.getElementById("bookingEmail").value.trim();
-    if (!name || !email) return;
+    const reason = document.getElementById("bookingReason").value.trim();
+    if (!name || !email || !reason) return;
     bookingSubmit.disabled = true;
     bookingSubmit.textContent = document.documentElement.lang === "es" ? "Confirmando…" : "Confirmant…";
     const status = document.getElementById("bookingResult");
     try {
-      const response = await fetch("/api/google/book", {method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name,email,start:chosenSlotIso,language:document.documentElement.lang})});
+      const response = await fetch("/api/google/book", {method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name,email,reason,start:chosenSlotIso,language:document.documentElement.lang})});
       const data = await response.json();
       if (!response.ok || !data.ok) throw new Error(data.message || "No s'ha pogut completar la reserva.");
       const confirmedStart = new Date(chosenSlotIso);
