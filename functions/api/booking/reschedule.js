@@ -24,10 +24,14 @@ export async function onRequestPost({ request, env }) {
     const oldLabels = appointmentLabels(oldStart, ctx.timeZone, record.language);
     const labels = appointmentLabels(newStart, ctx.timeZone, record.language);
     const es = record.language === "es";
+    const manageUrl = "https://anna-creus.pages.dev/gestionar-cita.html?token=" + encodeURIComponent(String(body.token || ""));
     const html = es
-      ? "<p>Hola " + escapeHtml(record.name) + ",</p><p>Tu cita se ha modificado correctamente.</p><p>Antes: <strong>" + oldLabels.date + " a las " + oldLabels.time + "</strong></p><p>Ahora: <strong>" + labels.date + " a las " + labels.time + "</strong></p><p>Anna Creus · Psicología</p>"
-      : "<p>Hola " + escapeHtml(record.name) + ",</p><p>La teva cita s'ha modificat correctament.</p><p>Abans: <strong>" + oldLabels.date + " a les " + oldLabels.time + "</strong></p><p>Ara: <strong>" + labels.date + " a les " + labels.time + "</strong></p><p>Anna Creus · Psicologia</p>";
-    const emailSent = await sendMail(env, record.email, es ? "Cambio de cita — Anna Creus" : "Canvi de cita — Anna Creus", html);
+      ? "<p>Hola " + escapeHtml(record.name) + ",</p><p>Tu cita se ha modificado correctamente.</p><p><strong>Nueva cita: " + labels.date + " a las " + labels.time + "</strong></p><p><a href='" + manageUrl + "' style='display:inline-block;padding:13px 22px;background:#c4d8d9;color:#252929;text-decoration:none;border-radius:24px;font-weight:600'>Modificar o cancelar mi cita</a></p><p>También puedes abrir este enlace directamente:<br><a href='" + manageUrl + "'>" + manageUrl + "</a></p><p>Puedes gestionar tu cita hasta 24 horas antes.</p><p>Anna Creus · Psicología</p>"
+      : "<p>Hola " + escapeHtml(record.name) + ",</p><p>La teva cita s'ha modificat correctament.</p><p><strong>Nova cita: " + labels.date + " a les " + labels.time + "</strong></p><p><a href='" + manageUrl + "' style='display:inline-block;padding:13px 22px;background:#c4d8d9;color:#252929;text-decoration:none;border-radius:24px;font-weight:600'>Modificar o cancel·lar la meva cita</a></p><p>També pots obrir aquest enllaç directament:<br><a href='" + manageUrl + "'>" + manageUrl + "</a></p><p>Pots gestionar la cita fins a 24 hores abans.</p><p>Anna Creus · Psicologia</p>";
+    const textBody = es
+      ? "Hola " + record.name + ". Tu cita se ha modificado. Nueva cita: " + labels.date + " a las " + labels.time + ". Para modificarla o cancelarla hasta 24 horas antes, abre: " + manageUrl
+      : "Hola " + record.name + ". La teva cita s'ha modificat. Nova cita: " + labels.date + " a les " + labels.time + ". Per modificar-la o cancel·lar-la fins a 24 hores abans, obre: " + manageUrl;
+    const emailSent = await sendMail(env, record.email, es ? "Cambio de cita — Anna Creus" : "Canvi de cita — Anna Creus", html, textBody);
     return json({ ok:true, date:labels.date, time:labels.time, emailSent });
   } catch (error) {
     console.error("Booking reschedule:", error?.message || "Unknown error");
