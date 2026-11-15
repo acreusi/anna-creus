@@ -189,27 +189,29 @@ if (calendarRoot) {
     const list = document.createElement("div");
     list.className = "calendar-time-list";
     const booked = monthBusy.map(event => ({event,item:eventInterval(event)})).filter(({item}) => item.allDay ? selectedDate>=item.startKey && selectedDate<item.endKey : new Date(item.start).toLocaleDateString("en-CA",{timeZone})===selectedDate);
-    booked.forEach(({event,item}) => {
-      if (item.allDay) return;
+    const entries = [
+      ...booked.filter(({item})=>!item.allDay).map(({item})=>({time:item.start, unavailable:true})),
+      ...slots.map(slot=>({time:slot.getTime(), unavailable:false}))
+    ].sort((a,b)=>a.time-b.time);
+    entries.forEach(entry => {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "calendar-time unavailable";
-      button.disabled = true;
-      button.textContent = new Intl.DateTimeFormat(currentLang()==="es"?"es-ES":"ca-ES",{timeZone,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(item.start)) + " · " + (currentLang()==="es"?"No disponible":"No disponible");
-      list.appendChild(button);
-    });
-    slots.forEach(slot => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "calendar-time";
-      button.textContent = new Intl.DateTimeFormat(currentLang()==="es"?"es-ES":"ca-ES",{timeZone,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(slot);
-      button.addEventListener("click",()=>{
-        list.querySelectorAll("button").forEach(item=>item.classList.remove("selected"));
-        button.classList.add("selected");
-        chosenSlotIso = slot.toISOString();
-        bookingSubmit.disabled = false;
-        statusRoot.textContent = copy("calendarSelected")+": "+button.textContent;
-      });
+      button.className = "calendar-time" + (entry.unavailable ? " unavailable" : "");
+      const slotDate = new Date(entry.time);
+      const timeLabel = new Intl.DateTimeFormat(currentLang()==="es"?"es-ES":"ca-ES",{timeZone,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(slotDate);
+      if (entry.unavailable) {
+        button.disabled = true;
+        button.textContent = timeLabel + " · No disponible";
+      } else {
+        button.textContent = timeLabel;
+        button.addEventListener("click",()=>{
+          list.querySelectorAll("button").forEach(item=>item.classList.remove("selected"));
+          button.classList.add("selected");
+          chosenSlotIso = slotDate.toISOString();
+          bookingSubmit.disabled = false;
+          statusRoot.textContent = copy("calendarSelected")+": "+button.textContent;
+        });
+      }
       list.appendChild(button);
     });
     if (!slots.length && !booked.length) {
