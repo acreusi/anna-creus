@@ -33,7 +33,7 @@ export async function onRequestPost({ request, env }) {
     const tokenKey = "booking_token:" + await hashToken(managementToken);
     const bookingRecord = { eventId:inserted.id, calendarId, startMs, name, email, language:body.language === "es" ? "es" : "ca", status:"active", createdAt:Date.now() };
     try {
-      await env.GOOGLE_TOKEN_STORE.put(tokenKey, JSON.stringify(bookingRecord), { expirationTtl:400 * 24 * 60 * 60 });
+      await env.GOOGLE_TOKEN_STORE.put(tokenKey, JSON.stringify(bookingRecord), { expirationTtl:450 * 24 * 60 * 60 });
     } catch (error) {
       await fetch("https://www.googleapis.com/calendar/v3/calendars/" + encodeURIComponent(calendarId) + "/events/" + encodeURIComponent(inserted.id), { method:"DELETE", headers:{ authorization:"Bearer " + td.access_token } });
       console.error("Could not save booking management token:", error?.message || "Unknown error");
