@@ -201,7 +201,7 @@ if (calendarRoot) {
       const timeLabel = new Intl.DateTimeFormat(currentLang()==="es"?"es-ES":"ca-ES",{timeZone,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(slotDate);
       if (entry.unavailable) {
         button.disabled = true;
-        button.textContent = timeLabel + " · No disponible";
+        button.textContent = timeLabel;
       } else {
         button.textContent = timeLabel;
         button.addEventListener("click",()=>{
