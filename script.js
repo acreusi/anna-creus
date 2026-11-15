@@ -1,6 +1,6 @@
 const translations = {
   ca: {
-    bookingEyebrow:"UN PRIMER CONTACTE", bookingTitle:"Demana una cita", bookingIntro:"Explica’m breument com et puc ajudar i em posaré en contacte amb tu.", bookingName:"Nom i cognoms", bookingEmail:"Correu electrònic", bookingReason:"Motiu de consulta (resum breu)", bookingReasonPlaceholder:"Pots explicar breument què t’agradaria treballar...", bookingPrivacy:"No cal que comparteixis informació íntima ni detalls personals en aquest primer contacte.", bookingAvailabilityTitle:"Consulta la disponibilitat", bookingAvailabilityText:"Selecciona un dia per veure les hores disponibles.", bookingComing:"Les reserves en línia encara no estan activades. Aquesta vista és només informativa.", calendarLegendAvailable:"Disponible", calendarLegendUnavailable:"No disponible", calendarChooseDay:"Selecciona un dia per consultar les hores.", calendarLoading:"Consultant la disponibilitat…", calendarError:"No s’ha pogut consultar el calendari. Torna-ho a provar més tard.", calendarNoTimes:"No hi ha hores disponibles aquest dia.", calendarSelectTime:"Hores disponibles", calendarClosed:"Consulta tancada", calendarSelected:"Hora seleccionada (simulació)", calendarPrev:"Mes anterior", calendarNext:"Mes següent", brandSubtitle:"PSICOLOGIA", navHome:"Inici", navAbout:"Sobre mi", navServices:"Acompanyament", navMethod:"Metodologia", navContact:"Contacte", navCta:"Demana cita",
+    bookingEyebrow:"UN PRIMER CONTACTE", bookingTitle:"Demana una cita", bookingIntro:"Tria el dia i l’hora que et vagin bé i confirma la reserva.", bookingName:"Nom i cognoms", bookingEmail:"Correu electrònic", bookingReason:"Motiu de consulta (resum breu)", bookingReasonPlaceholder:"Pots explicar breument què t’agradaria treballar...", bookingPrivacy:"No cal que comparteixis informació íntima ni detalls personals en aquest primer contacte.", bookingAvailabilityTitle:"Consulta la disponibilitat", bookingAvailabilityText:"Selecciona un dia per veure les hores disponibles.", bookingComing:"La reserva quedarà confirmada quan s’hagi desat correctament al calendari.", calendarLegendAvailable:"Disponible", calendarLegendUnavailable:"No disponible", calendarChooseDay:"Selecciona un dia per consultar les hores.", calendarLoading:"Consultant la disponibilitat…", calendarError:"No s’ha pogut consultar el calendari. Torna-ho a provar més tard.", calendarNoTimes:"No hi ha hores disponibles aquest dia.", calendarSelectTime:"Hores disponibles", calendarClosed:"Consulta tancada", calendarSelected:"Hora seleccionada", calendarPrev:"Mes anterior", calendarNext:"Mes següent", brandSubtitle:"PSICOLOGIA", navHome:"Inici", navAbout:"Sobre mi", navServices:"Acompanyament", navMethod:"Metodologia", navContact:"Contacte", navCta:"Demana cita",
     heroEyebrow:"PSICOLOGIA · UN ESPAI PER A TU", heroTitle:"Un espai per entendre’t, cuidar-te i avançar.", heroLead:"Un acompanyament psicològic proper i individualitzat, amb una mirada respectuosa i basada en l’evidència.", heroButton:"Coneix aquest espai", heroBottom:"Un procés, al teu ritme.",
     aboutIndex:"SOBRE MI", aboutEyebrow:"UNA MIRADA PROPERA I SENSE JUDICIS", aboutTitle:"Cada persona té una història. I cada procés, el seu propi camí.", aboutText:"Aquest és un espai pensat per poder parlar del que et preocupa, comprendre millor què estàs vivint i trobar eines que t’ajudin en el teu dia a dia. Sense presses i partint de les teves necessitats.", aboutLink:"La manera de treballar",
     servicesIndex:"ACOMPANYAMENT", servicesEyebrow:"EN QUÈ PODEM TREBALLAR", servicesTitle:"Un espai per posar paraules, comprendre i fer canvis.", servicesIntro:"El punt de partida és sempre la persona: allò que necessita, el moment en què es troba i els seus objectius.", serviceOne:"Ansietat i preocupacions", serviceTwo:"Estat d’ànim i benestar emocional", serviceThree:"Autoestima i autoconeixement", serviceFour:"Canvis vitals i moments difícils", servicesNote:"Els àmbits d’acompanyament definitius es concretaran abans de l’obertura de la consulta.",
@@ -8,7 +8,7 @@ const translations = {
     contactIndex:"CONTACTE", contactEyebrow:"UN PRIMER PAS", contactTitle:"Quan sigui el moment, podem començar parlant.", contactText:"La consulta i el sistema de reserva encara estan en preparació. Aquest espai s’actualitzarà amb tota la informació abans de començar a oferir visites.", comingSoon:"Properament", footerText:"Un espai per entendre’t, cuidar-te i avançar."
   },
   es: {
-    bookingEyebrow:"UN PRIMER CONTACTO", bookingTitle:"Solicita una cita", bookingIntro:"Explícame brevemente cómo puedo ayudarte y me pondré en contacto contigo.", bookingName:"Nombre y apellidos", bookingEmail:"Correo electrónico", bookingReason:"Motivo de consulta (resumen breve)", bookingReasonPlaceholder:"Puedes explicar brevemente qué te gustaría trabajar...", bookingPrivacy:"No hace falta que compartas información íntima ni detalles personales en este primer contacto.", bookingAvailabilityTitle:"Consulta la disponibilidad", bookingAvailabilityText:"Selecciona un día para ver las horas disponibles.", bookingComing:"Las reservas en línea todavía no están activadas. Esta vista es solo informativa.", calendarLegendAvailable:"Disponible", calendarLegendUnavailable:"No disponible", calendarChooseDay:"Selecciona un día para consultar los horarios.", calendarLoading:"Consultando la disponibilidad…", calendarError:"No se ha podido consultar el calendario. Inténtalo de nuevo más tarde.", calendarNoTimes:"No hay horarios disponibles este día.", calendarSelectTime:"Horarios disponibles", calendarClosed:"Consulta cerrada", calendarSelected:"Hora seleccionada (simulación)", calendarPrev:"Mes anterior", calendarNext:"Mes siguiente", brandSubtitle:"PSICOLOGÍA", navHome:"Inicio", navAbout:"Sobre mí", navServices:"Acompañamiento", navMethod:"Metodología", navContact:"Contacto", navCta:"Pide cita",
+    bookingEyebrow:"UN PRIMER CONTACTO", bookingTitle:"Solicita una cita", bookingIntro:"Elige el día y la hora que te vayan bien y confirma la reserva.", bookingName:"Nombre y apellidos", bookingEmail:"Correo electrónico", bookingReason:"Motivo de consulta (resumen breve)", bookingReasonPlaceholder:"Puedes explicar brevemente qué te gustaría trabajar...", bookingPrivacy:"No hace falta que compartas información íntima ni detalles personales en este primer contacto.", bookingAvailabilityTitle:"Consulta la disponibilidad", bookingAvailabilityText:"Selecciona un día para ver las horas disponibles.", bookingComing:"La cita quedará confirmada cuando se haya guardado correctamente en el calendario.", calendarLegendAvailable:"Disponible", calendarLegendUnavailable:"No disponible", calendarChooseDay:"Selecciona un día para consultar los horarios.", calendarLoading:"Consultando la disponibilidad…", calendarError:"No se ha podido consultar el calendario. Inténtalo de nuevo más tarde.", calendarNoTimes:"No hay horarios disponibles este día.", calendarSelectTime:"Horarios disponibles", calendarClosed:"Consulta cerrada", calendarSelected:"Horario seleccionado", calendarPrev:"Mes anterior", calendarNext:"Mes siguiente", brandSubtitle:"PSICOLOGÍA", navHome:"Inicio", navAbout:"Sobre mí", navServices:"Acompañamiento", navMethod:"Metodología", navContact:"Contacto", navCta:"Pide cita",
     heroEyebrow:"PSICOLOGÍA · UN ESPACIO PARA TI", heroTitle:"Un espacio para comprenderte, cuidarte y avanzar.", heroLead:"Un acompañamiento psicológico cercano e individualizado, desde una mirada respetuosa y basada en la evidencia.", heroButton:"Conoce este espacio", heroBottom:"Un proceso, a tu ritmo.",
     aboutIndex:"SOBRE MÍ", aboutEyebrow:"UNA MIRADA CERCANA Y SIN JUICIOS", aboutTitle:"Cada persona tiene una historia. Y cada proceso, su propio camino.", aboutText:"Este es un espacio pensado para poder hablar de lo que te preocupa, comprender mejor lo que estás viviendo y encontrar herramientas que te ayuden en tu día a día. Sin prisas y partiendo de tus necesidades.", aboutLink:"La forma de trabajar",
     servicesIndex:"ACOMPAÑAMIENTO", servicesEyebrow:"EN QUÉ PODEMOS TRABAJAR", servicesTitle:"Un espacio para poner palabras, comprender y hacer cambios.", servicesIntro:"El punto de partida es siempre la persona: lo que necesita, el momento en el que se encuentra y sus objetivos.", serviceOne:"Ansiedad y preocupaciones", serviceTwo:"Estado de ánimo y bienestar emocional", serviceThree:"Autoestima y autoconocimiento", serviceFour:"Cambios vitales y momentos difíciles", servicesNote:"Los ámbitos de acompañamiento definitivos se concretarán antes de la apertura de la consulta.",
@@ -71,7 +71,10 @@ document.addEventListener("keydown", event => {
 });
 
 
-// Read-only appointment availability preview. No booking is created or personal data sent.
+// Live appointment availability and booking.
+let chosenSlotIso = null;
+const bookingForm = document.querySelector(".booking-form");
+const bookingSubmit = document.getElementById("bookingSubmit");
 const calendarRoot = document.getElementById("bookingCalendar");
 if (calendarRoot) {
   const monthLabel = document.getElementById("calendarMonth");
@@ -127,7 +130,6 @@ if (calendarRoot) {
     });
   }
   function timesForDay(key) {
-    selectedDate = key;
     const day = parseDateKey(key);
     if (day.getDay() === 0 || day.getDay() === 6) return [];
     const slots = [];
@@ -183,6 +185,8 @@ if (calendarRoot) {
       button.addEventListener("click",()=>{
         list.querySelectorAll("button").forEach(item=>item.classList.remove("selected"));
         button.classList.add("selected");
+        chosenSlotIso = slot.toISOString();
+        bookingSubmit.disabled = false;
         statusRoot.textContent = copy("calendarSelected")+": "+button.textContent;
       });
       list.appendChild(button);
@@ -206,11 +210,8 @@ if (calendarRoot) {
       const isPast = key < dateKey(today);
       const isWeekend = weekday===0 || weekday===6;
       const isFutureLimit = date > new Date(today.getFullYear()+1,today.getMonth(),today.getDate());
-      const dayBusy = monthBusy.some(event=>{
-        const item=eventInterval(event);
-        return item.allDay ? key>=item.startKey && key<item.endKey : item.start < zonedDateTimeToIso(key,19,20).getTime() && item.end > zonedDateTimeToIso(key,16,0).getTime();
-      });
-      const unavailable = isPast || isWeekend || isFutureLimit || dayBusy;
+      const noSlots = !isPast && !isWeekend && !isFutureLimit && timesForDay(key).length === 0;
+      const unavailable = isPast || isWeekend || isFutureLimit || noSlots;
       if (unavailable) button.classList.add("unavailable");
       else button.classList.add("available");
       if (key===selectedDate) button.classList.add("selected");
@@ -218,6 +219,7 @@ if (calendarRoot) {
       button.setAttribute("aria-label",key+(unavailable?" — "+copy("calendarLegendUnavailable"):" — "+copy("calendarLegendAvailable")));
       button.addEventListener("click",()=>{
         selectedDate=key;
+        chosenSlotIso=null; bookingSubmit.disabled=true;
         statusRoot.textContent="";
         renderDays(); renderTimes();
       });
@@ -250,8 +252,8 @@ if (calendarRoot) {
     }
   }
   function yearMonthKey(){return shownMonth.getFullYear()+"-"+pad(shownMonth.getMonth()+1);}
-  prevButton.addEventListener("click",()=>{if(!prevButton.disabled){shownMonth=new Date(shownMonth.getFullYear(),shownMonth.getMonth()-1,1);selectedDate=null;loadMonth();}});
-  nextButton.addEventListener("click",()=>{if(!nextButton.disabled){shownMonth=new Date(shownMonth.getFullYear(),shownMonth.getMonth()+1,1);selectedDate=null;loadMonth();}});
+  prevButton.addEventListener("click",()=>{if(!prevButton.disabled){shownMonth=new Date(shownMonth.getFullYear(),shownMonth.getMonth()-1,1);selectedDate=null;chosenSlotIso=null;bookingSubmit.disabled=true;loadMonth();}});
+  nextButton.addEventListener("click",()=>{if(!nextButton.disabled){shownMonth=new Date(shownMonth.getFullYear(),shownMonth.getMonth()+1,1);selectedDate=null;chosenSlotIso=null;bookingSubmit.disabled=true;loadMonth();}});
   renderWeekdays();
   loadMonth();
   document.querySelectorAll("[data-lang]").forEach(button=>button.addEventListener("click",()=>{
@@ -259,4 +261,31 @@ if (calendarRoot) {
     prevButton.setAttribute("aria-label",copy("calendarPrev"));
     nextButton.setAttribute("aria-label",copy("calendarNext"));
   }));
+}
+
+
+if (bookingForm) {
+  bookingForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    if (!chosenSlotIso) return;
+    const name = document.getElementById("bookingName").value.trim();
+    const email = document.getElementById("bookingEmail").value.trim();
+    if (!name || !email) return;
+    bookingSubmit.disabled = true;
+    bookingSubmit.textContent = document.documentElement.lang === "es" ? "Confirmando…" : "Confirmant…";
+    const status = document.getElementById("calendarStatus");
+    try {
+      const response = await fetch("/api/google/book", {method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name,email,start:chosenSlotIso})});
+      const data = await response.json();
+      if (!response.ok || !data.ok) throw new Error(data.message || "No s'ha pogut completar la reserva.");
+      status.textContent = document.documentElement.lang === "es" ? "¡Cita confirmada! La reserva ya consta en el calendario." : "Cita confirmada! La reserva ja consta al calendari.";
+      bookingSubmit.textContent = document.documentElement.lang === "es" ? "Reserva confirmada" : "Reserva confirmada";
+      bookingForm.reset(); chosenSlotIso = null;
+      document.getElementById("calendarTimes").innerHTML = "";
+    } catch (error) {
+      status.textContent = error.message || (document.documentElement.lang === "es" ? "No se ha podido confirmar. Vuelve a intentarlo." : "No s'ha pogut confirmar. Torna-ho a provar.");
+      bookingSubmit.disabled = false;
+      bookingSubmit.textContent = document.documentElement.lang === "es" ? "Confirmar reserva" : "Confirmar reserva";
+    }
+  });
 }
