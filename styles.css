@@ -25,3 +25,32 @@
 .booking-coming{font-size:11px;color:#879293;text-align:center;line-height:1.6;margin:17px 0 0}
 body.booking-open{overflow:hidden}
 @media(max-width:760px){.booking-overlay{padding:12px}.booking-dialog{padding:30px 23px;border-radius:13px;max-height:92vh}}
+
+
+/* Read-only appointment calendar */
+.calendar-panel{margin-top:22px;padding:18px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.58)}
+.calendar-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.calendar-heading h3{font:600 15px var(--serif);text-transform:capitalize;margin:0}
+.calendar-nav{width:34px;height:34px;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--ink);font-size:22px;line-height:1;cursor:pointer}
+.calendar-nav:disabled{opacity:.25;cursor:default}
+.calendar-weekdays,.calendar-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;text-align:center}
+.calendar-weekdays{margin-bottom:7px}
+.calendar-weekdays span{font-size:10px;font-weight:600;color:var(--muted);padding:5px 0}
+.calendar-day{aspect-ratio:1;border:0;border-radius:50%;background:transparent;font:13px var(--sans);color:var(--ink);display:grid;place-items:center}
+button.calendar-day{cursor:pointer}
+.calendar-day.available{background:#e5efec}
+.calendar-day.available:hover,.calendar-day.available.selected{background:var(--blue);box-shadow:inset 0 0 0 1px #78999b}
+.calendar-day.unavailable{color:#b4baba;text-decoration:line-through;cursor:not-allowed}
+.calendar-day.blank{visibility:hidden}
+.calendar-legend{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0 18px;color:var(--muted);font-size:10px}
+.calendar-legend>span{display:flex;align-items:center;gap:6px}
+.legend-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.legend-dot.available{background:#a8c8c5}.legend-dot.unavailable{background:#c9cecc}
+.calendar-times{border-top:1px solid var(--line);padding-top:14px;min-height:48px}
+.calendar-hint{font-size:11px;color:var(--muted);margin:0}
+.calendar-times-title{font-size:12px}
+.calendar-time-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.calendar-time{border:1px solid #a8c2c1;background:#fff;border-radius:7px;padding:9px 15px;font:600 12px var(--sans);color:var(--ink);cursor:pointer}
+.calendar-time:hover,.calendar-time.selected{background:var(--blue);border-color:#78999b}
+.calendar-status{font-size:10px;color:#6d8586;min-height:14px;margin:8px 0 0}
+@media(max-width:480px){.calendar-panel{padding:14px 11px}.calendar-weekdays,.calendar-days{gap:2px}.calendar-day{font-size:12px}.calendar-legend{gap:10px}}
