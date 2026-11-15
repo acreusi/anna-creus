@@ -59,3 +59,17 @@ button.calendar-day{cursor:pointer}
 
 .calendar-time.unavailable{background:#eceeed;border-color:#d5d9d7;color:#a3aaa8;text-decoration:line-through;cursor:not-allowed;opacity:.8}
 .booking-result{font-size:12px;line-height:1.6;color:#587476;text-align:center;min-height:18px;margin:10px 0 0}
+
+
+/* Clear confirmation state after a successful booking */
+.booking-dialog.is-confirmed .booking-intro,
+.booking-dialog.is-confirmed .booking-form,
+.booking-dialog.is-confirmed .booking-availability,
+.booking-dialog.is-confirmed .calendar-panel,
+.booking-dialog.is-confirmed .booking-submit,
+.booking-dialog.is-confirmed .booking-coming{display:none}
+.booking-success{margin:30px 0 12px;padding:30px 22px;background:#e8f0ec;border:1px solid #c8dcd3;border-radius:14px;text-align:center}
+.booking-success[hidden]{display:none}
+.booking-success-icon{display:grid;place-items:center;width:54px;height:54px;margin:0 auto 16px;border-radius:50%;background:#c4d8d9;color:#253b3b;font-size:29px;font-weight:700}
+.booking-success h3{font:600 25px var(--serif);letter-spacing:-.6px;margin:0 0 8px;color:var(--ink)}
+.booking-success p{font-size:14px;line-height:1.7;color:#526565;margin:0}
