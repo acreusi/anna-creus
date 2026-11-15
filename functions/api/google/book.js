@@ -1,4 +1,4 @@
-import { createToken, hashToken, sendMail, escapeHtml, appointmentLabels } from "../booking/_shared.js";
+import { createToken, hashToken, escapeHtml } from "../booking/_shared.js";
 export async function onRequestPost({ request, env }) {
   const json = (body,status=200)=>new Response(JSON.stringify(body),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store"}});
   if(!env.GOOGLE_CLIENT_ID||!env.GOOGLE_CLIENT_SECRET||!env.GOOGLE_TOKEN_STORE)return json({ok:false,message:"La configuració de Google no està completa."},500);
