@@ -122,15 +122,13 @@
       <button class="booking-close" type="button" data-close-booking aria-label="Tancar">×</button>
       <p class="eyebrow" data-i18n="bookingEyebrow">UN PRIMER CONTACTE</p>
       <h2 id="bookingTitle" data-i18n="bookingTitle">Demana una cita</h2>
-      <p class="booking-intro" data-i18n="bookingIntro">Explica’m breument com et puc ajudar i em posaré en contacte amb tu.</p>
-      <form class="booking-form">
+      <p class="booking-intro" data-i18n="bookingIntro">Tria el dia i l’hora que et vagin bé i confirma la reserva.</p>
+      <form class="booking-form" id="bookingForm">
         <label for="bookingName" data-i18n="bookingName">Nom i cognoms</label>
         <input id="bookingName" name="name" autocomplete="name" required>
         <label for="bookingEmail" data-i18n="bookingEmail">Correu electrònic</label>
         <input id="bookingEmail" name="email" type="email" autocomplete="email" required>
-        <label for="bookingReason" data-i18n="bookingReason">Motiu de consulta (resum breu)</label>
-        <textarea id="bookingReason" name="reason" rows="3" data-i18n-placeholder="bookingReasonPlaceholder" placeholder="Pots explicar breument què t’agradaria treballar..."></textarea>
-        <p class="booking-privacy" data-i18n="bookingPrivacy">No cal que comparteixis informació íntima ni detalls personals en aquest primer contacte.</p>
+        <p class="booking-privacy" data-i18n="bookingPrivacy">Les teves dades s’utilitzaran únicament per gestionar aquesta reserva.</p>
       </form>
       <div class="booking-availability">
         <span class="availability-icon">◷</span>
@@ -150,7 +148,8 @@
         </div>
         <p class="calendar-status" id="calendarStatus" role="status"></p>
       </div>
-      <p class="booking-coming" data-i18n="bookingComing">Les reserves en línia encara no estan activades. Aquesta vista és només informativa.</p>
+      <button class="button booking-submit" id="bookingSubmit" type="submit" form="bookingForm" disabled>Confirmar reserva</button>
+      <p class="booking-coming" data-i18n="bookingComing">La reserva quedarà confirmada quan s’hagi desat correctament al calendari.</p>
     </section>
   </div>
 </body>
