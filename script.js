@@ -167,16 +167,22 @@ if (calendarRoot) {
       return;
     }
     const slots = timesForDay(selectedDate);
-    if (!slots.length) {
-      timesRoot.innerHTML = '<p class="calendar-hint">'+copy("calendarNoTimes")+'</p>';
-      return;
-    }
     const heading = document.createElement("strong");
     heading.className = "calendar-times-title";
     heading.textContent = copy("calendarSelectTime");
     timesRoot.appendChild(heading);
     const list = document.createElement("div");
     list.className = "calendar-time-list";
+    const booked = monthBusy.map(event => ({event,item:eventInterval(event)})).filter(({item}) => item.allDay ? selectedDate>=item.startKey && selectedDate<item.endKey : new Date(item.start).toLocaleDateString("en-CA",{timeZone})===selectedDate);
+    booked.forEach(({event,item}) => {
+      if (item.allDay) return;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "calendar-time unavailable";
+      button.disabled = true;
+      button.textContent = new Intl.DateTimeFormat(currentLang()==="es"?"es-ES":"ca-ES",{timeZone,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(item.start)) + " · " + (currentLang()==="es"?"No disponible":"No disponible");
+      list.appendChild(button);
+    });
     slots.forEach(slot => {
       const button = document.createElement("button");
       button.type = "button";
@@ -191,6 +197,9 @@ if (calendarRoot) {
       });
       list.appendChild(button);
     });
+    if (!slots.length && !booked.length) {
+      timesRoot.innerHTML += '<p class="calendar-hint">'+copy("calendarNoTimes")+'</p>';
+    }
     timesRoot.appendChild(list);
   }
   function renderDays() {
