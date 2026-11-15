@@ -1,5 +1,11 @@
 export async function onRequestGet({ request, env }) {
-  if (!env.GOOGLE_CLIENT_ID || !env.GOOGLE_CLIENT_SECRET || !env.GOOGLE_TOKEN_STORE) {
+  const missing = {
+    GOOGLE_CLIENT_ID: !env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: !env.GOOGLE_CLIENT_SECRET,
+    GOOGLE_TOKEN_STORE: !env.GOOGLE_TOKEN_STORE
+  };
+  if (Object.values(missing).some(Boolean)) {
+    console.error("Google OAuth configuration missing:", missing);
     return new Response("Falta configurar la connexió amb Google a Cloudflare.", { status: 500 });
   }
 
