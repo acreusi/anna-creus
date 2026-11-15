@@ -51,7 +51,7 @@ button.calendar-day{cursor:pointer}
 .calendar-status{font-size:10px;color:#6d8586;min-height:14px;margin:8px 0 0}
 @media(max-width:480px){.calendar-panel{padding:14px 11px}.calendar-weekdays,.calendar-days{gap:2px}.calendar-day{font-size:12px}}
 
-.booking-submit{width:100%;justify-content:center;margin-top:16px;font-family:inherit}.booking-submit:disabled{opacity:.45;cursor:not-allowed;transform:none}.booking-submit:not(:disabled){cursor:pointer}
+.booking-submit{width:100%;justify-content:center;margin-top:16px;font-family:inherit;background:var(--blue);color:var(--ink)}.booking-submit:disabled{opacity:.45;cursor:not-allowed;transform:none}.booking-submit:not(:disabled){cursor:pointer}
 
 .calendar-time.unavailable{background:#eceeed;border-color:#d5d9d7;color:#a3aaa8;text-decoration:line-through;cursor:not-allowed;opacity:.8}
 .booking-result{font-size:12px;line-height:1.6;color:#587476;text-align:center;min-height:18px;margin:10px 0 0}
