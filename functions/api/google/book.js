@@ -65,7 +65,7 @@ export async function onRequestPost({ request, env }) {
       }catch(error){console.error("Resend request failed:",error?.message||"Unknown error");}
     }
     // Internal notification to Anna when a new appointment is booked.
-    const adminEmail = "ame.creus@gmail.com";
+    const adminEmail = "flamablava1@gmail.com";
     const adminDate = new Intl.DateTimeFormat("ca-ES",{timeZone,weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(new Date(startMs));
     const adminTime = new Intl.DateTimeFormat("ca-ES",{timeZone,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(startMs));
     const adminSubject = "Nova reserva — Anna Creus";
