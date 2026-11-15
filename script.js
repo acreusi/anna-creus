@@ -90,6 +90,7 @@ if (calendarRoot) {
   let selectedDate = null;
   let monthBusy = [];
   let loading = false;
+  let availabilityFailed = false;
   const monthNames = {
     ca:["gener","febrer","març","abril","maig","juny","juliol","agost","setembre","octubre","novembre","desembre"],
     es:["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"]
@@ -157,6 +158,10 @@ if (calendarRoot) {
   }
   function renderTimes() {
     timesRoot.innerHTML = "";
+    if (availabilityFailed) {
+      timesRoot.innerHTML = '<p class="calendar-hint">'+copy("calendarError")+'</p>';
+      return;
+    }
     if (!selectedDate) {
       timesRoot.innerHTML = '<p class="calendar-hint">'+copy("calendarChooseDay")+'</p>';
       return;
@@ -220,7 +225,7 @@ if (calendarRoot) {
       const isWeekend = weekday===0 || weekday===6;
       const isFutureLimit = date > new Date(today.getFullYear()+1,today.getMonth(),today.getDate());
       const noSlots = !isPast && !isWeekend && !isFutureLimit && timesForDay(key).length === 0;
-      const unavailable = isPast || isWeekend || isFutureLimit || noSlots;
+      const unavailable = availabilityFailed || isPast || isWeekend || isFutureLimit || noSlots;
       if (unavailable) button.classList.add("unavailable");
       else button.classList.add("available");
       if (key===selectedDate) button.classList.add("selected");
@@ -238,7 +243,7 @@ if (calendarRoot) {
     nextButton.disabled = shownMonth > new Date(today.getFullYear()+1,today.getMonth(),1);
   }
   async function loadMonth() {
-    loading=true; statusRoot.textContent=copy("calendarLoading");
+    loading=true; availabilityFailed=false; statusRoot.textContent=copy("calendarLoading");
     renderDays(); renderTimes();
     const first = new Date(shownMonth.getFullYear(),shownMonth.getMonth(),1);
     const last = new Date(shownMonth.getFullYear(),shownMonth.getMonth()+1,1);
@@ -250,12 +255,12 @@ if (calendarRoot) {
         return fetch(url,{cache:"no-store"}).then(r=>r.json().then(data=>{if(!r.ok||!data.ok) throw new Error(data.message||"Availability error");return data;}));
       }));
       monthBusy = responses.flatMap(data=>data.busy||[]);
-      loading=false; statusRoot.textContent="";
+      loading=false; availabilityFailed=false; statusRoot.textContent="";
       renderDays();
       if (selectedDate && selectedDate.slice(0,7)===yearMonthKey()) renderTimes();
       else { selectedDate=null; renderTimes(); }
     } catch(error) {
-      loading=false; monthBusy=[];
+      loading=false; monthBusy=[]; availabilityFailed=true;
       renderDays(); renderTimes();
       statusRoot.textContent=copy("calendarError");
     }
