@@ -27,6 +27,25 @@ export async function onRequestPost({ request, env }) {
     const insert=await fetch("https://www.googleapis.com/calendar/v3/calendars/"+encodeURIComponent(calendarId)+"/events",{method:"POST",headers:{authorization:"Bearer "+td.access_token,"content-type":"application/json"},body:JSON.stringify(event)}),inserted=await insert.json();
     if(insert.status===409)return json({ok:false,message:"Una altra persona acaba de reservar aquesta hora. Actualitza el calendari i tria'n una altra."},409);
     if(!insert.ok)return json({ok:false,message:"Google Calendar no ha pogut desar la reserva."},502);
-    return json({ok:true,bookingId:inserted.id});
+
+    // Resend test-mode delivery: onboarding@resend.dev can deliver only to a verified recipient.
+    let emailSent=false;
+    if(env.RESEND_API_KEY){
+      const locale=body.language==="es"?"es-ES":"ca-ES";
+      const dateLabel=new Intl.DateTimeFormat(locale,{timeZone,weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(new Date(startMs));
+      const timeLabel=new Intl.DateTimeFormat(locale,{timeZone,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(startMs));
+      const safeName=name.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+      const subject=body.language==="es"?"Confirmación de tu cita — Anna Creus":"Confirmació de la teva cita — Anna Creus";
+      const html=body.language==="es"
+        ? "<p>Hola "+safeName+",</p><p>Tu cita se ha confirmado correctamente.</p><p><strong>"+dateLabel+" a las "+timeLabel+"</strong></p><p>Anna Creus · Psicología</p>"
+        : "<p>Hola "+safeName+",</p><p>La teva cita s’ha confirmat correctament.</p><p><strong>"+dateLabel+" a les "+timeLabel+"</strong></p><p>Anna Creus · Psicologia</p>";
+      try{
+        const sent=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"authorization":"Bearer "+env.RESEND_API_KEY,"content-type":"application/json"},body:JSON.stringify({from:"Anna Creus <onboarding@resend.dev>",to:[email],subject,html})});
+        const sentData=await sent.json();
+        emailSent=sent.ok&&Boolean(sentData.id);
+        if(!emailSent)console.error("Resend delivery failed:",sentData.message||sent.status);
+      }catch(error){console.error("Resend request failed:",error?.message||"Unknown error");}
+    }
+    return json({ok:true,bookingId:inserted.id,emailSent});
   }catch(error){console.error("Booking failed:",error?.message||"Unknown error");return json({ok:false,message:"S'ha produït un error en confirmar la reserva."},500);}
 }
