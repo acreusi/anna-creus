@@ -300,7 +300,7 @@ if (bookingForm) {
     bookingSubmit.textContent = document.documentElement.lang === "es" ? "Confirmando…" : "Confirmant…";
     const status = document.getElementById("bookingResult");
     try {
-      const response = await fetch("/api/google/book", {method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name,email,start:chosenSlotIso})});
+      const response = await fetch("/api/google/book", {method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name,email,start:chosenSlotIso,language:document.documentElement.lang})});
       const data = await response.json();
       if (!response.ok || !data.ok) throw new Error(data.message || "No s'ha pogut completar la reserva.");
       const confirmedStart = new Date(chosenSlotIso);
@@ -308,8 +308,8 @@ if (bookingForm) {
       const confirmedDate = new Intl.DateTimeFormat(locale,{timeZone:"Europe/Madrid",weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(confirmedStart);
       const confirmedTime = new Intl.DateTimeFormat(locale,{timeZone:"Europe/Madrid",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(confirmedStart);
       document.getElementById("bookingSuccessDetails").textContent = document.documentElement.lang === "es"
-        ? "Tu cita se ha guardado correctamente para el " + confirmedDate + " a las " + confirmedTime + "."
-        : "La teva cita s’ha desat correctament per al " + confirmedDate + " a les " + confirmedTime + ".";
+        ? "Tu cita se ha guardado correctamente para el " + confirmedDate + " a las " + confirmedTime + "." + (data.emailSent ? " Te hemos enviado un correo de confirmación." : " No se ha podido enviar el correo de prueba; la reserva sí está confirmada.")
+        : "La teva cita s’ha desat correctament per al " + confirmedDate + " a les " + confirmedTime + "." + (data.emailSent ? " T’hem enviat un correu de confirmació." : " No s’ha pogut enviar el correu de prova; la reserva sí que està confirmada.");
       document.querySelector("#bookingSuccess h3").textContent = document.documentElement.lang === "es" ? "Cita confirmada" : "Cita confirmada";
       document.getElementById("bookingSuccess").hidden = false;
       bookingModal.querySelector(".booking-dialog").classList.add("is-confirmed");
