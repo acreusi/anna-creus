@@ -22,7 +22,7 @@ export async function onRequestPost({ request, env }) {
     let candidate=dayStart(16,0),valid=false,guard=0;
     while(candidate+duration<=close&&guard++<12){const conflict=busy.filter(e=>candidate<e.end&&candidate+duration>e.start).sort((a,b)=>a.end-b.end)[0];if(conflict){candidate=conflict.end+600000;continue;}if(candidate===startMs){valid=true;break;}if(candidate>startMs)break;candidate+=duration;}
     if(!valid)return json({ok:false,message:"Aquesta hora ja no està disponible. Actualitza el calendari i tria una altra hora."},409);
-    const digest=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(calendarId+"|"+new Date(startMs).toISOString())),eventId=Array.from(new Uint8Array(digest)).map(b=>b.toString(16).padStart(2,"0")).join("");
+    const eventId=crypto.randomUUID().replace(/-/g,"");
     const event={id:eventId,summary:"Cita — "+name,description:"Contacte: "+email,visibility:"private",start:{dateTime:new Date(startMs).toISOString(),timeZone},end:{dateTime:new Date(startMs+duration).toISOString(),timeZone}};
     const insert=await fetch("https://www.googleapis.com/calendar/v3/calendars/"+encodeURIComponent(calendarId)+"/events",{method:"POST",headers:{authorization:"Bearer "+td.access_token,"content-type":"application/json"},body:JSON.stringify(event)}),inserted=await insert.json();
     if(insert.status===409)return json({ok:false,message:"Una altra persona acaba de reservar aquesta hora. Actualitza el calendari i tria'n una altra."},409);
