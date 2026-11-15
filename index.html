@@ -132,6 +132,8 @@
         <input id="bookingName" name="name" autocomplete="name" required>
         <label for="bookingEmail" data-i18n="bookingEmail">Correu electrònic</label>
         <input id="bookingEmail" name="email" type="email" autocomplete="email" required>
+        <label for="bookingReason" data-i18n="bookingReason">Motiu de consulta (resum breu)</label>
+        <textarea id="bookingReason" name="reason" rows="3" maxlength="1000" data-i18n-placeholder="bookingReasonPlaceholder" placeholder="Pots explicar breument què t’agradaria treballar..." required></textarea>
         <p class="booking-privacy" data-i18n="bookingPrivacy">Les teves dades s’utilitzaran únicament per gestionar aquesta reserva.</p>
       </form>
       <div class="booking-availability">
@@ -146,7 +148,6 @@
         </div>
         <div class="calendar-weekdays" id="calendarWeekdays"></div>
         <div class="calendar-days" id="calendarDays"></div>
-        <div class="calendar-legend"><span><i class="legend-dot available"></i><span data-i18n="calendarLegendAvailable">Disponible</span></span><span><i class="legend-dot unavailable"></i><span data-i18n="calendarLegendUnavailable">No disponible</span></span></div>
         <div class="calendar-times" id="calendarTimes">
           <p class="calendar-hint" data-i18n="calendarChooseDay">Selecciona un dia per consultar les hores.</p>
         </div>
