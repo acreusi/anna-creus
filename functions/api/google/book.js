@@ -5,8 +5,8 @@ export async function onRequestPost({ request, env }) {
   const calendarId=await env.GOOGLE_TOKEN_STORE.get("google_calendar_id"),refreshToken=await env.GOOGLE_TOKEN_STORE.get("google_calendar_refresh_token"),timeZone=await env.GOOGLE_TOKEN_STORE.get("google_calendar_timezone")||"Europe/Madrid";
   if(!calendarId||!refreshToken)return json({ok:false,message:"El calendari encara no està configurat."},409);
   let body;try{body=await request.json();}catch{return json({ok:false,message:"La sol·licitud no és vàlida."},400);}
-  const name=String(body.name||"").trim().slice(0,100),email=String(body.email||"").trim().slice(0,254),startMs=Date.parse(body.start||"");
-  if(!name||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||!Number.isFinite(startMs))return json({ok:false,message:"Revisa el nom, el correu i l'hora seleccionada."},400);
+  const name=String(body.name||"").trim().slice(0,100),email=String(body.email||"").trim().slice(0,254),reason=String(body.reason||"").trim().slice(0,1000),startMs=Date.parse(body.start||"");
+  if(!name||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||!reason||!Number.isFinite(startMs))return json({ok:false,message:"Revisa el nom, el correu i l'hora seleccionada."},400);
   if(startMs<Date.now()||startMs>Date.now()+370*86400000)return json({ok:false,message:"La data seleccionada ja no és vàlida."},400);
   const parts=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{timeZone,year:"numeric",month:"2-digit",day:"2-digit",weekday:"short"}).formatToParts(new Date(startMs)).map(x=>[x.type,x.value]));
   if(["Sat","Sun"].includes(parts.weekday))return json({ok:false,message:"La consulta està tancada aquest dia."},400);
@@ -24,7 +24,7 @@ export async function onRequestPost({ request, env }) {
     while(candidate+duration<=close&&guard++<12){const conflict=busy.filter(e=>candidate<e.end&&candidate+duration>e.start).sort((a,b)=>a.end-b.end)[0];if(conflict){candidate=conflict.end+600000;continue;}if(candidate===startMs){valid=true;break;}if(candidate>startMs)break;candidate+=duration;}
     if(!valid)return json({ok:false,message:"Aquesta hora ja no està disponible. Actualitza el calendari i tria una altra hora."},409);
     const eventId=crypto.randomUUID().replace(/-/g,"");
-    const event={id:eventId,summary:"Cita — "+name,description:"Contacte: "+email,visibility:"private",start:{dateTime:new Date(startMs).toISOString(),timeZone},end:{dateTime:new Date(startMs+duration).toISOString(),timeZone}};
+    const event={id:eventId,summary:"Cita — "+name,description:"Contacte: "+email+"\\n\\nResum del motiu de consulta: "+reason,visibility:"private",start:{dateTime:new Date(startMs).toISOString(),timeZone},end:{dateTime:new Date(startMs+duration).toISOString(),timeZone}};
     const insert=await fetch("https://www.googleapis.com/calendar/v3/calendars/"+encodeURIComponent(calendarId)+"/events",{method:"POST",headers:{authorization:"Bearer "+td.access_token,"content-type":"application/json"},body:JSON.stringify(event)}),inserted=await insert.json();
     if(insert.status===409)return json({ok:false,message:"Una altra persona acaba de reservar aquesta hora. Actualitza el calendari i tria'n una altra."},409);
     if(!insert.ok)return json({ok:false,message:"Google Calendar no ha pogut desar la reserva."},502);
