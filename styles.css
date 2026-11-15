@@ -7,7 +7,7 @@
 .button-small{cursor:pointer;font-family:inherit}
 .booking-overlay{position:fixed;inset:0;z-index:30;background:rgba(25,32,32,.48);display:grid;place-items:center;padding:24px;backdrop-filter:blur(5px)}
 .booking-overlay[hidden]{display:none}
-.booking-dialog{position:relative;width:min(100%,540px);max-height:min(88vh,800px);overflow:auto;background:var(--paper);padding:clamp(28px,5vw,48px);box-shadow:0 24px 80px rgba(0,0,0,.2);border-radius:16px}
+.booking-dialog{position:relative;width:min(100%,540px);max-height:min(88vh,800px);overflow:auto;background:var(--paper);padding:clamp(28px,5vw,48px);box-shadow:0 24px 80px rgba(0,0,0,.2);border-radius:16px !important;clip-path:inset(0 round 16px)}
 .booking-close{position:absolute;right:20px;top:16px;border:0;background:none;font-size:30px;line-height:1;color:#667172;cursor:pointer;padding:5px 9px}
 .booking-dialog .eyebrow{margin:0 35px 12px 0}
 .booking-dialog h2{font-family:var(--serif);font-size:clamp(32px,5vw,43px);font-weight:500;letter-spacing:-1.5px;line-height:1.15;margin:0 0 12px}
@@ -53,7 +53,7 @@ button.calendar-day{cursor:pointer}
 .calendar-time{border:1px solid #a8c2c1;background:#fff;border-radius:7px;padding:9px 15px;font:600 12px var(--sans);color:var(--ink);cursor:pointer}
 .calendar-time:hover,.calendar-time.selected{background:var(--blue);border-color:#78999b}
 .calendar-status{font-size:10px;color:#6d8586;min-height:14px;margin:8px 0 0}
-@media(max-width:480px){.calendar-panel{padding:14px 11px}.calendar-weekdays,.calendar-days{gap:2px}.calendar-day{font-size:12px}.calendar-legend{gap:10px}}
+@media(max-width:480px){.calendar-panel{padding:14px 11px}.calendar-weekdays,.calendar-days{gap:2px}.calendar-day{font-size:12px}}
 
 .booking-submit{width:100%;justify-content:center;margin-top:16px;font-family:inherit}.booking-submit:disabled{opacity:.45;cursor:not-allowed;transform:none}.booking-submit:not(:disabled){cursor:pointer}
 
