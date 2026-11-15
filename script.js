@@ -274,7 +274,7 @@ if (bookingForm) {
     if (!name || !email) return;
     bookingSubmit.disabled = true;
     bookingSubmit.textContent = document.documentElement.lang === "es" ? "Confirmando…" : "Confirmant…";
-    const status = document.getElementById("calendarStatus");
+    const status = document.getElementById("bookingResult");
     try {
       const response = await fetch("/api/google/book", {method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name,email,start:chosenSlotIso})});
       const data = await response.json();
