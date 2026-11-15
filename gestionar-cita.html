@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#c4d8d9">
+  <meta name="referrer" content="no-referrer">
+  <title>Gestionar la cita · Anna Creus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body{background:#f8f7f3;min-height:100vh}.manage-wrap{width:min(680px,calc(100% - 40px));margin:8vh auto;padding:clamp(28px,6vw,56px);background:#fff;border-radius:22px;box-shadow:0 18px 60px #25292912}.manage-brand{font:700 22px Manrope,sans-serif;color:#252929;text-decoration:none}.manage-eyebrow{margin:38px 0 10px;color:#647e80;font-size:11px;letter-spacing:.16em;font-weight:700}.manage-wrap h1{font:600 clamp(28px,5vw,40px) Manrope,sans-serif;line-height:1.15;margin:0 0 16px;color:#252929}.manage-copy{color:#646d6d;line-height:1.7}.manage-appointment{background:#f2f6f5;border-radius:14px;padding:20px;margin:26px 0;color:#252929;line-height:1.8}.manage-actions{display:grid;gap:14px;margin-top:24px}.manage-wrap label{display:block;font-weight:600;margin:18px 0 8px}.manage-wrap input,.manage-wrap select{width:100%;padding:14px;border:1px solid #d7dfdd;border-radius:10px;background:white;font:inherit;color:#252929}.manage-wrap button{border:0;border-radius:999px;padding:15px 22px;font:600 15px inherit;cursor:pointer}.manage-primary{background:#c4d8d9;color:#252929}.manage-secondary{background:#f2f3f1;color:#333}.manage-danger{background:#fff0ed;color:#9a4033}.manage-status{margin-top:18px;line-height:1.6;color:#486466}.manage-error{color:#9a4033}.manage-note{font-size:13px;color:#747d7b;line-height:1.6;margin-top:22px}.manage-hidden{display:none!important}@media(max-width:520px){.manage-wrap{margin:20px auto}.manage-eyebrow{margin-top:30px}}
+  </style>
+  <script src="gestionar-cita.js" defer></script>
+</head>
+<body>
+  <main class="manage-wrap">
+    <a class="manage-brand" href="/">Anna Creus <span style="font-size:11px;letter-spacing:.12em;font-weight:600;color:#71898a">· PSICOLOGIA</span></a>
+    <p class="manage-eyebrow" id="eyebrow">GESTIÓ DE LA CITA</p>
+    <h1 id="title">Gestiona la teva cita</h1>
+    <p class="manage-copy" id="intro">Aquí pots consultar, modificar o cancel·lar la teva reserva.</p>
+    <div id="loading" class="manage-status">Carregant la informació de la cita…</div>
+    <section id="content" class="manage-hidden">
+      <div class="manage-appointment"><strong id="appointmentLabel">La teva cita actual</strong><br><span id="appointmentDate"></span><br><span id="appointmentTime"></span></div>
+      <div id="controls">
+        <div id="reschedulePanel">
+          <label for="newDate" id="dateLabel">Tria una nova data</label>
+          <input type="date" id="newDate">
+          <label for="newTime" id="timeLabel">Hores disponibles</label>
+          <select id="newTime" disabled><option value="">Selecciona primer una data</option></select>
+          <button class="manage-primary" id="rescheduleButton" type="button" disabled>Modificar la cita</button>
+        </div>
+        <div class="manage-actions">
+          <button class="manage-danger" id="cancelButton" type="button">Cancel·lar la cita</button>
+        </div>
+        <p class="manage-note" id="cutoffNote">Pots modificar o cancel·lar la cita fins a 24 hores abans. Després d'aquest termini, contacta directament amb Anna.</p>
+      </div>
+    </section>
+    <p id="status" class="manage-status" role="status" aria-live="polite"></p>
+  </main>
+</body>
+</html>
