@@ -1,3 +1,4 @@
+import { createToken, hashToken, sendMail, escapeHtml, appointmentLabels } from "../booking/_shared.js";
 export async function onRequestPost({ request, env }) {
   const json = (body,status=200)=>new Response(JSON.stringify(body),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store"}});
   if(!env.GOOGLE_CLIENT_ID||!env.GOOGLE_CLIENT_SECRET||!env.GOOGLE_TOKEN_STORE)return json({ok:false,message:"La configuració de Google no està completa."},500);
@@ -28,17 +29,31 @@ export async function onRequestPost({ request, env }) {
     if(insert.status===409)return json({ok:false,message:"Una altra persona acaba de reservar aquesta hora. Actualitza el calendari i tria'n una altra."},409);
     if(!insert.ok)return json({ok:false,message:"Google Calendar no ha pogut desar la reserva."},502);
 
+    const managementToken = await createToken();
+    const tokenKey = "booking_token:" + await hashToken(managementToken);
+    const bookingRecord = { eventId:inserted.id, calendarId, startMs, name, email, language:body.language === "es" ? "es" : "ca", status:"active", createdAt:Date.now() };
+    try {
+      await env.GOOGLE_TOKEN_STORE.put(tokenKey, JSON.stringify(bookingRecord), { expirationTtl:400 * 24 * 60 * 60 });
+    } catch (error) {
+      await fetch("https://www.googleapis.com/calendar/v3/calendars/" + encodeURIComponent(calendarId) + "/events/" + encodeURIComponent(inserted.id), { method:"DELETE", headers:{ authorization:"Bearer " + td.access_token } });
+      console.error("Could not save booking management token:", error?.message || "Unknown error");
+      return json({ok:false,message:"No s'ha pogut completar la gestió segura de la reserva. Torna-ho a provar."},500);
+    }
+    const manageUrl = new URL("/gestionar-cita.html", new URL(request.url).origin);
+    manageUrl.searchParams.set("token", managementToken);
     // Resend test-mode delivery: onboarding@resend.dev can deliver only to a verified recipient.
     let emailSent=false;
     if(env.RESEND_API_KEY){
       const locale=body.language==="es"?"es-ES":"ca-ES";
       const dateLabel=new Intl.DateTimeFormat(locale,{timeZone,weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(new Date(startMs));
       const timeLabel=new Intl.DateTimeFormat(locale,{timeZone,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(startMs));
-      const safeName=name.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-      const subject=body.language==="es"?"Confirmación de tu cita — Anna Creus":"Confirmació de la teva cita — Anna Creus";
-      const html=body.language==="es"
-        ? "<p>Hola "+safeName+",</p><p>Tu cita se ha confirmado correctamente.</p><p><strong>"+dateLabel+" a las "+timeLabel+"</strong></p><p>Anna Creus · Psicología</p>"
-        : "<p>Hola "+safeName+",</p><p>La teva cita s’ha confirmat correctament.</p><p><strong>"+dateLabel+" a les "+timeLabel+"</strong></p><p>Anna Creus · Psicologia</p>";
+      const safeName=escapeHtml(name);
+      const es=body.language==="es";
+      const subject=es?"Confirmación de tu cita — Anna Creus":"Confirmació de la teva cita — Anna Creus";
+      const manageLink=manageUrl.toString();
+      const html=es
+        ? "<p>Hola "+safeName+",</p><p>Tu cita se ha confirmado correctamente.</p><p><strong>"+dateLabel+" a las "+timeLabel+"</strong></p><p>Si lo necesitas, puedes <a href='"+manageLink+"'>modificar o cancelar tu cita</a> hasta 24 horas antes.</p><p>Anna Creus · Psicología</p>"
+        : "<p>Hola "+safeName+",</p><p>La teva cita s’ha confirmat correctament.</p><p><strong>"+dateLabel+" a les "+timeLabel+"</strong></p><p>Si ho necessites, pots <a href='"+manageLink+"'>modificar o cancel·lar la teva cita</a> fins a 24 hores abans.</p><p>Anna Creus · Psicologia</p>";
       try{
         const sent=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"authorization":"Bearer "+env.RESEND_API_KEY,"content-type":"application/json"},body:JSON.stringify({from:"Anna Creus <onboarding@resend.dev>",to:[email],subject,html})});
         const sentData=await sent.json();
