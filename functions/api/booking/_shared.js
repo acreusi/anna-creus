@@ -71,12 +71,12 @@ export function nextAvailableSlot(startMs, busy, timeZone) {
   }
   return null;
 }
-export async function sendMail(env, to, subject, html) {
+export async function sendMail(env, to, subject, html, textBody) {
   if (!env.RESEND_API_KEY) return false;
   try {
     const response = await fetch("https://api.resend.com/emails", {
       method:"POST", headers:{ authorization:"Bearer " + env.RESEND_API_KEY, "content-type":"application/json" },
-      body:JSON.stringify({ from:"Anna Creus <onboarding@resend.dev>", to:[to], subject, html })
+      body:JSON.stringify({ from:"Anna Creus <onboarding@resend.dev>", to:[to], subject, html, ...(textBody ? { text:textBody } : {}) })
     });
     const data = await response.json();
     return response.ok && Boolean(data.id);
