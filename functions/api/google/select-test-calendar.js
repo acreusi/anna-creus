@@ -45,13 +45,13 @@ export async function onRequestGet({ env }) {
       return json({ ok: false, message: "No s'ha pogut consultar la llista de calendaris." }, 502);
     }
 
-    const targetName = "Proves – Anna Creus";
+    const targetName = "proves psico AnnaCreus";
     const matches = (data.items || []).filter(calendar => calendar.summary === targetName);
 
     if (matches.length === 0) {
       return json({
         ok: false,
-        message: "No he trobat cap calendari amb el nom exacte «Proves – Anna Creus». Comprova'n el nom a Google Calendar."
+        message: "No he trobat cap calendari amb el nom exacte «proves psico AnnaCreus». Comprova'n el nom a Google Calendar."
       }, 404);
     }
 
