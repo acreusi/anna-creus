@@ -52,6 +52,16 @@ const bookingModal = document.getElementById("bookingModal");
 const bookingOpeners = document.querySelectorAll("[data-open-booking]");
 const bookingCloser = bookingModal.querySelector("[data-close-booking]");
 function openBooking() {
+  const dialog = bookingModal.querySelector(".booking-dialog");
+  if (dialog.classList.contains("is-confirmed")) {
+    dialog.classList.remove("is-confirmed");
+    document.getElementById("bookingSuccess").hidden = true;
+    document.getElementById("bookingForm").reset();
+    document.getElementById("bookingResult").textContent = "";
+    document.getElementById("bookingSubmit").disabled = true;
+    document.getElementById("bookingSubmit").textContent = document.documentElement.lang === "es" ? "Confirmar reserva" : "Confirmar reserva";
+    if (typeof chosenSlotIso !== "undefined") chosenSlotIso = null;
+  }
   bookingModal.hidden = false;
   document.body.classList.add("booking-open");
   bookingModal.querySelector("input").focus();
@@ -293,8 +303,15 @@ if (bookingForm) {
       const response = await fetch("/api/google/book", {method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({name,email,start:chosenSlotIso})});
       const data = await response.json();
       if (!response.ok || !data.ok) throw new Error(data.message || "No s'ha pogut completar la reserva.");
-      status.textContent = document.documentElement.lang === "es" ? "¡Cita confirmada! La reserva ya consta en el calendario." : "Cita confirmada! La reserva ja consta al calendari.";
-      bookingSubmit.textContent = document.documentElement.lang === "es" ? "Reserva confirmada" : "Reserva confirmada";
+      const confirmedStart = new Date(chosenSlotIso);
+      const locale = document.documentElement.lang === "es" ? "es-ES" : "ca-ES";
+      const confirmedDate = new Intl.DateTimeFormat(locale,{timeZone:"Europe/Madrid",weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(confirmedStart);
+      const confirmedTime = new Intl.DateTimeFormat(locale,{timeZone:"Europe/Madrid",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(confirmedStart);
+      document.getElementById("bookingSuccessDetails").textContent = document.documentElement.lang === "es"
+        ? "Tu cita se ha guardado correctamente para el " + confirmedDate + " a las " + confirmedTime + "."
+        : "La teva cita s’ha desat correctament per al " + confirmedDate + " a les " + confirmedTime + ".";
+      document.getElementById("bookingSuccess").hidden = false;
+      bookingModal.querySelector(".booking-dialog").classList.add("is-confirmed");
       bookingForm.reset(); chosenSlotIso = null;
       document.dispatchEvent(new Event("booking:confirmed"));
     } catch (error) {
