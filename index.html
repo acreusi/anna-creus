@@ -123,6 +123,11 @@
       <p class="eyebrow" data-i18n="bookingEyebrow">UN PRIMER CONTACTE</p>
       <h2 id="bookingTitle" data-i18n="bookingTitle">Demana una cita</h2>
       <p class="booking-intro" data-i18n="bookingIntro">Tria el dia i l’hora que et vagin bé i confirma la reserva.</p>
+      <div class="booking-success" id="bookingSuccess" role="status" aria-live="polite" hidden>
+        <span class="booking-success-icon" aria-hidden="true">✓</span>
+        <h3 data-i18n="bookingSuccessTitle">Cita confirmada</h3>
+        <p id="bookingSuccessDetails">La teva reserva s’ha desat correctament.</p>
+      </div>
       <form class="booking-form" id="bookingForm">
         <label for="bookingName" data-i18n="bookingName">Nom i cognoms</label>
         <input id="bookingName" name="name" autocomplete="name" required>
