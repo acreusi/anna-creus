@@ -52,10 +52,13 @@ export async function onRequestPost({ request, env }) {
       const subject=es?"Confirmación de tu cita — Anna Creus":"Confirmació de la teva cita — Anna Creus";
       const manageLink=manageUrl.toString();
       const html=es
-        ? "<p>Hola "+safeName+",</p><p>Tu cita se ha confirmado correctamente.</p><p><strong>"+dateLabel+" a las "+timeLabel+"</strong></p><p>Si lo necesitas, puedes <a href='"+manageLink+"'>modificar o cancelar tu cita</a> hasta 24 horas antes.</p><p>Anna Creus · Psicología</p>"
-        : "<p>Hola "+safeName+",</p><p>La teva cita s’ha confirmat correctament.</p><p><strong>"+dateLabel+" a les "+timeLabel+"</strong></p><p>Si ho necessites, pots <a href='"+manageLink+"'>modificar o cancel·lar la teva cita</a> fins a 24 hores abans.</p><p>Anna Creus · Psicologia</p>";
+        ? "<p>Hola "+safeName+",</p><p>Tu cita se ha confirmado correctamente.</p><p><strong>"+dateLabel+" a las "+timeLabel+"</strong></p><p><a href='"+manageLink+"' style='display:inline-block;padding:13px 22px;background:#c4d8d9;color:#252929;text-decoration:none;border-radius:24px;font-weight:600'>Modificar o cancelar mi cita</a></p><p>También puedes abrir este enlace directamente:<br><a href='"+manageLink+"'>"+manageLink+"</a></p><p>Puedes gestionar tu cita hasta 24 horas antes.</p><p>Anna Creus · Psicología</p>"
+        : "<p>Hola "+safeName+",</p><p>La teva cita s’ha confirmat correctament.</p><p><strong>"+dateLabel+" a les "+timeLabel+"</strong></p><p><a href='"+manageLink+"' style='display:inline-block;padding:13px 22px;background:#c4d8d9;color:#252929;text-decoration:none;border-radius:24px;font-weight:600'>Modificar o cancel·lar la meva cita</a></p><p>També pots obrir aquest enllaç directament:<br><a href='"+manageLink+"'>"+manageLink+"</a></p><p>Pots gestionar la cita fins a 24 hores abans.</p><p>Anna Creus · Psicologia</p>";
+      const textBody=es
+        ? "Hola "+name+". Tu cita se ha confirmado: "+dateLabel+" a las "+timeLabel+". Para modificarla o cancelarla hasta 24 horas antes, abre: "+manageLink
+        : "Hola "+name+". La teva cita s'ha confirmat: "+dateLabel+" a les "+timeLabel+". Per modificar-la o cancel·lar-la fins a 24 hores abans, obre: "+manageLink;
       try{
-        const sent=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"authorization":"Bearer "+env.RESEND_API_KEY,"content-type":"application/json"},body:JSON.stringify({from:"Anna Creus <onboarding@resend.dev>",to:[email],subject,html})});
+        const sent=await fetch("https://api.resend.com/emails",{method:"POST",headers:{"authorization":"Bearer "+env.RESEND_API_KEY,"content-type":"application/json"},body:JSON.stringify({from:"Anna Creus <onboarding@resend.dev>",to:[email],subject,html,text:textBody})});
         const sentData=await sent.json();
         emailSent=sent.ok&&Boolean(sentData.id);
         if(!emailSent)console.error("Resend delivery failed:",sentData.message||sent.status);
