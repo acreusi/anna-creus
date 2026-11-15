@@ -10,8 +10,7 @@ export async function onRequestPost({ request, env }) {
     if (!Number.isFinite(newStart) || newStart <= Date.now() || newStart > Date.now() + 370 * 86400000) return json({ ok:false, message:"La nova data no és vàlida." }, 400);
     const ctx = await googleContext(env);
     const busy = await getDayBusy(ctx.accessToken, ctx.calendarId, ctx.timeZone, newStart);
-    const otherBusy = busy.filter(e => e.id !== record.eventId);
-    if (nextAvailableSlot(newStart, otherBusy, ctx.timeZone) !== newStart) return json({ ok:false, message:record.language === "es" ? "Ese horario ya no está disponible. Elige otro." : "Aquesta hora ja no està disponible. Tria'n una altra." }, 409);
+    if (nextAvailableSlot(newStart, busy, ctx.timeZone) !== newStart) return json({ ok:false, message:record.language === "es" ? "Ese horario ya no está disponible. Elige otro." : "Aquesta hora ja no està disponible. Tria'n una altra." }, 409);
     const event = { start:{ dateTime:new Date(newStart).toISOString(), timeZone:ctx.timeZone }, end:{ dateTime:new Date(newStart + 3600000).toISOString(), timeZone:ctx.timeZone } };
     const response = await fetch(eventUrl(ctx.calendarId, record.eventId), { method:"PATCH", headers:{ authorization:"Bearer " + ctx.accessToken, "content-type":"application/json" }, body:JSON.stringify(event) });
     if (!response.ok) {
