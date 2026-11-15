@@ -256,6 +256,7 @@ if (calendarRoot) {
   nextButton.addEventListener("click",()=>{if(!nextButton.disabled){shownMonth=new Date(shownMonth.getFullYear(),shownMonth.getMonth()+1,1);selectedDate=null;chosenSlotIso=null;bookingSubmit.disabled=true;loadMonth();}});
   renderWeekdays();
   loadMonth();
+  document.addEventListener("booking:confirmed",()=>{chosenSlotIso=null;selectedDate=null;bookingSubmit.disabled=true;bookingSubmit.textContent=copy("bookingConfirm");loadMonth();});
   document.querySelectorAll("[data-lang]").forEach(button=>button.addEventListener("click",()=>{
     renderWeekdays(); renderDays(); renderTimes();
     prevButton.setAttribute("aria-label",copy("calendarPrev"));
@@ -281,7 +282,7 @@ if (bookingForm) {
       status.textContent = document.documentElement.lang === "es" ? "¡Cita confirmada! La reserva ya consta en el calendario." : "Cita confirmada! La reserva ja consta al calendari.";
       bookingSubmit.textContent = document.documentElement.lang === "es" ? "Reserva confirmada" : "Reserva confirmada";
       bookingForm.reset(); chosenSlotIso = null;
-      document.getElementById("calendarTimes").innerHTML = "";
+      document.dispatchEvent(new Event("booking:confirmed"));
     } catch (error) {
       status.textContent = error.message || (document.documentElement.lang === "es" ? "No se ha podido confirmar. Vuelve a intentarlo." : "No s'ha pogut confirmar. Torna-ho a provar.");
       bookingSubmit.disabled = false;
