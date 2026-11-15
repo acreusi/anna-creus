@@ -134,9 +134,23 @@
       </form>
       <div class="booking-availability">
         <span class="availability-icon">◷</span>
-        <div><strong data-i18n="bookingAvailabilityTitle">Triarem l’hora que et vagi bé</strong><p data-i18n="bookingAvailabilityText">La disponibilitat en temps real s’activarà quan connectem el calendari de la consulta.</p></div>
+        <div><strong data-i18n="bookingAvailabilityTitle">Consulta la disponibilitat</strong><p data-i18n="bookingAvailabilityText">Selecciona un dia per veure les hores disponibles.</p></div>
       </div>
-      <p class="booking-coming" data-i18n="bookingComing">Les sol·licituds i reserves en línia estaran disponibles properament.</p>
+      <div class="calendar-panel" id="bookingCalendar" aria-live="polite">
+        <div class="calendar-heading">
+          <button type="button" class="calendar-nav" id="calendarPrev" aria-label="Mes anterior">‹</button>
+          <h3 id="calendarMonth"></h3>
+          <button type="button" class="calendar-nav" id="calendarNext" aria-label="Mes següent">›</button>
+        </div>
+        <div class="calendar-weekdays" id="calendarWeekdays"></div>
+        <div class="calendar-days" id="calendarDays"></div>
+        <div class="calendar-legend"><span><i class="legend-dot available"></i><span data-i18n="calendarLegendAvailable">Disponible</span></span><span><i class="legend-dot unavailable"></i><span data-i18n="calendarLegendUnavailable">No disponible</span></span></div>
+        <div class="calendar-times" id="calendarTimes">
+          <p class="calendar-hint" data-i18n="calendarChooseDay">Selecciona un dia per consultar les hores.</p>
+        </div>
+        <p class="calendar-status" id="calendarStatus" role="status"></p>
+      </div>
+      <p class="booking-coming" data-i18n="bookingComing">Les reserves en línia encara no estan activades. Aquesta vista és només informativa.</p>
     </section>
   </div>
 </body>
