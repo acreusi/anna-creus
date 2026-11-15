@@ -1,4 +1,4 @@
-import { createToken, hashToken, escapeHtml } from "../booking/_shared.js";
+import { createToken, hashToken, escapeHtml, sendMail } from "../booking/_shared.js";
 export async function onRequestPost({ request, env }) {
   const json = (body,status=200)=>new Response(JSON.stringify(body),{status,headers:{"content-type":"application/json; charset=utf-8","cache-control":"no-store"}});
   if(!env.GOOGLE_CLIENT_ID||!env.GOOGLE_CLIENT_SECRET||!env.GOOGLE_TOKEN_STORE)return json({ok:false,message:"La configuració de Google no està completa."},500);
@@ -64,6 +64,16 @@ export async function onRequestPost({ request, env }) {
         if(!emailSent)console.error("Resend delivery failed:",sentData.message||sent.status);
       }catch(error){console.error("Resend request failed:",error?.message||"Unknown error");}
     }
-    return json({ok:true,bookingId:inserted.id,emailSent});
+    // Internal notification to Anna when a new appointment is booked.
+    const adminEmail = "ame.creus@gmail.com";
+    const adminDate = new Intl.DateTimeFormat("ca-ES",{timeZone,weekday:"long",day:"numeric",month:"long",year:"numeric"}).format(new Date(startMs));
+    const adminTime = new Intl.DateTimeFormat("ca-ES",{timeZone,hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(startMs));
+    const adminSubject = "Nova reserva — Anna Creus";
+    const adminHtml = "<p>Has rebut una nova sol·licitud de cita.</p><p><strong>" + escapeHtml(name) + "</strong></p><p>" + escapeHtml(adminDate) + " a les " + escapeHtml(adminTime) + "</p><p>Correu electrònic: <a href='mailto:" + escapeHtml(email) + "'>" + escapeHtml(email) + "</a></p><p>La reserva ja està desada a Google Calendar.</p>";
+    const adminText = "Nova reserva — Anna Creus\\n" + name + "\\n" + adminDate + " a les " + adminTime + "\\nCorreu: " + email + "\\nLa reserva ja està desada a Google Calendar.";
+    const notificationSent = await sendMail(env, adminEmail, adminSubject, adminHtml, adminText);
+    if (!notificationSent) console.error("Internal booking notification could not be sent.");
+
+    return json({ok:true,bookingId:inserted.id,emailSent,notificationSent});
   }catch(error){console.error("Booking failed:",error?.message||"Unknown error");return json({ok:false,message:"S'ha produït un error en confirmar la reserva."},500);}
 }
