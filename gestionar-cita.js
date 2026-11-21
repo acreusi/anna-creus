@@ -44,6 +44,7 @@
     $("monthPrev").disabled=visibleMonth<=min;$("monthNext").disabled=visibleMonth>=max;
   }
   async function loadMonth(month){
+    if(visibleMonth&&visibleMonth!==month){selectedDate="";$("newTime").innerHTML="";$("newTime").disabled=true;$("rescheduleButton").disabled=true;}
     visibleMonth=month;$("calendarDays").innerHTML="";
     const [y,m]=month.split("-").map(Number),start=dayStart({year:String(y),month:String(m).padStart(2,"0"),day:"01"},0,0),next=new Date(Date.UTC(y,m,1,12)),end=dayStart({year:String(next.getUTCFullYear()),month:String(next.getUTCMonth()+1).padStart(2,"0"),day:"01"},0,0);
     try{
