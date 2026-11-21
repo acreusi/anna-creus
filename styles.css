@@ -80,3 +80,13 @@ button.calendar-day{cursor:pointer}
 
 /* Make the main booking action more visible on mobile */
 @media(max-width:760px){.header-actions .button{padding:11px 15px;font-size:12px;font-weight:700;box-shadow:0 3px 10px rgba(37,41,41,.16);border:1px solid #a9c7c9;}}
+
+/* Legal links and privacy acknowledgement */
+.footer-legal-links{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.footer-legal-links a{color:#5f7374;text-decoration:underline;text-underline-offset:3px}
+.footer-legal-links a:hover{color:#78999b}
+.booking-privacy-check{display:flex;align-items:flex-start;gap:10px;margin:3px 0 8px}
+.booking-privacy-check input{width:16px;height:16px;flex:0 0 16px;margin:3px 0 0;accent-color:#78999b}
+.booking-privacy-check label{font-size:11px!important;line-height:1.6;font-weight:400!important;margin:0!important;color:#667172}
+.booking-privacy-check a{color:#587476;text-decoration:underline;text-underline-offset:2px}
+@media(max-width:760px){.footer-legal-links{grid-column:1/-1;grid-row:3;gap:13px}.site-footer>span:last-child{grid-column:2;grid-row:1}}
