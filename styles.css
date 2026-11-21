@@ -90,3 +90,8 @@ button.calendar-day{cursor:pointer}
 .booking-privacy-check label{font-size:11px!important;line-height:1.6;font-weight:400!important;margin:0!important;color:#667172}
 .booking-privacy-check a{color:#587476;text-decoration:underline;text-underline-offset:2px}
 @media(max-width:760px){.footer-legal-links{grid-column:1/-1;grid-row:3;gap:13px}.site-footer>span:last-child{grid-column:2;grid-row:1}}
+
+
+/* CTA del bloc de contacte: contrast amb el fons blau */
+.contact-inner .contact-cta{background:var(--paper);color:var(--ink);box-shadow:0 3px 12px rgba(37,41,41,.08)}
+.contact-inner .contact-cta:hover{background:#eeece5;transform:translateY(-2px)}
