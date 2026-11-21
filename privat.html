@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <meta name="theme-color" content="#c4d8d9">
+  <title>Espai privat · Anna Creus</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+  <script src="admin.js" defer></script>
+</head>
+<body>
+  <main class="auth-shell" id="loginView" hidden>
+    <a class="auth-brand" href="/"><span>Anna Creus</span><small>PSICÒLOGA</small></a>
+    <section class="auth-card">
+      <p class="eyebrow">ÀREA PROFESSIONAL</p>
+      <h1>Benvinguda</h1>
+      <p class="muted">Accedeix al teu espai privat de treball.</p>
+      <form id="loginForm">
+        <label for="username">Usuari</label>
+        <input id="username" name="username" autocomplete="username" required>
+        <label for="password">Contrasenya</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+        <button class="primary-button" id="loginButton" type="submit">Entrar al meu espai <span>→</span></button>
+        <p class="form-error" id="loginError" role="alert"></p>
+      </form>
+    </section>
+    <a class="back-link" href="/">← Tornar a la web pública</a>
+  </main>
+
+  <div class="app-shell" id="appView" hidden>
+    <aside class="sidebar">
+      <a class="app-brand" href="/"><span>Anna Creus</span><small>ESPAI PROFESSIONAL</small></a>
+      <div class="sidebar-label">ESPAI DE TREBALL</div>
+      <nav class="side-nav" aria-label="Menú privat">
+        <button class="side-link active" data-section="overview"><span class="nav-icon">⌂</span> Inici</button>
+        <button class="side-link" data-section="calendar"><span class="nav-icon">▦</span> Calendari</button>
+        <button class="side-link" data-section="patients"><span class="nav-icon">♧</span> Pacients</button>
+        <button class="side-link" data-section="documents"><span class="nav-icon">▤</span> Documents</button>
+        <button class="side-link" data-section="settings"><span class="nav-icon">⚙</span> Configuració</button>
+      </nav>
+      <div class="sidebar-bottom"><span class="status-dot"></span> Espai privat</div>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div><span class="topbar-kicker">ESPAI PROFESSIONAL</span><h1 id="pageTitle">Inici</h1></div>
+        <button class="logout-button" id="logoutButton">Tancar sessió <span>↗</span></button>
+      </header>
+      <section class="view-section active" id="section-overview">
+        <div class="welcome-panel"><div><p class="eyebrow">EL TEU ESPAI DE TREBALL</p><h2>Hola, Anna.</h2><p>Tot el que necessites per organitzar la consulta, en un mateix lloc.</p></div><div class="welcome-mark">AC<span>·</span></div></div>
+        <div class="section-heading"><div><p class="eyebrow">RESUM</p><h2>La teva activitat</h2></div><span class="muted small">Vista inicial</span></div>
+        <div class="summary-grid">
+          <article class="summary-card"><span class="summary-icon">▦</span><p>Pròximes cites</p><strong>—</strong><small>El calendari es connectarà en una fase següent</small></article>
+          <article class="summary-card"><span class="summary-icon">♧</span><p>Pacients</p><strong>0</strong><small>Encara no hi ha fitxes creades</small></article>
+          <article class="summary-card"><span class="summary-icon">▤</span><p>Documents</p><strong>—</strong><small>Espai pendent de configurar</small></article>
+        </div>
+        <div class="notice-panel"><span class="notice-icon">i</span><div><strong>Espai en construcció</strong><p>Aquesta és la primera estructura del teu panell privat. Anirem activant les funcions progressivament. De moment no hi introdueixis dades reals de pacients ni informació clínica.</p></div></div>
+      </section>
+
+      <section class="view-section" id="section-calendar">
+        <div class="section-heading"><div><p class="eyebrow">ORGANITZACIÓ</p><h2>Calendari</h2></div></div>
+        <div class="empty-panel"><span class="empty-icon">▦</span><h3>El teu calendari de consulta</h3><p>En el següent pas connectarem aquesta vista amb el calendari de Google perquè puguis consultar les cites, veure'n els detalls administratius i gestionar la teva agenda des d'aquí.</p><span class="coming-label">PENDENT DE CONNECTAR</span></div>
+      </section>
+      <section class="view-section" id="section-patients">
+        <div class="section-heading"><div><p class="eyebrow">GESTIÓ</p><h2>Pacients</h2></div></div>
+        <div class="empty-panel"><span class="empty-icon">♧</span><h3>Fitxes de pacients</h3><p>Prepararem un registre ordenat de pacients amb les dades imprescindibles i, més endavant, l'accés a la documentació clínica amb permisos i proteccions específiques.</p><span class="coming-label">PENDENT DE CONFIGURAR</span></div>
+      </section>
+      <section class="view-section" id="section-documents">
+        <div class="section-heading"><div><p class="eyebrow">RECURSOS</p><h2>Documents</h2></div></div>
+        <div class="empty-panel"><span class="empty-icon">▤</span><h3>Documents i materials</h3><p>Aquí podrem organitzar plantilles, documents de treball i materials per a la consulta. No hi pugis encara documentació identificativa ni clínica.</p><span class="coming-label">PENDENT DE CONFIGURAR</span></div>
+      </section>
+      <section class="view-section" id="section-settings">
+        <div class="section-heading"><div><p class="eyebrow">EL TEU COMPTE</p><h2>Configuració</h2></div></div>
+        <div class="settings-panel"><div><strong>Accés privat</strong><p>Accés amb usuari i contrasenya i sessió protegida al servidor.</p></div><span class="secure-pill">PROTEGIT</span></div>
+        <div class="settings-panel"><div><strong>Gestió de pacients</strong><p>Els comptes de pacients no formen part d'aquesta primera fase.</p></div><span class="coming-label">MÉS ENDAVANT</span></div>
+      </section>
+      <footer class="workspace-footer">Anna Creus · Espai professional <span>Versió inicial</span></footer>
+    </main>
+  </div>
+</body>
+</html>
