@@ -118,6 +118,11 @@
       <footer class="site-footer">
         <a class="brand footer-brand" href="#inici"><span class="brand-name">Anna Creus</span><span class="brand-subtitle">PSICOLOGIA</span></a>
         <span data-i18n="footerText">Un espai per entendre’t, cuidar-te i avançar.</span>
+        <nav class="footer-legal-links" aria-label="Informació legal">
+          <a href="legal.html#avis-legal" data-i18n="footerLegal">Avís legal</a>
+          <a href="legal.html#privacitat" data-i18n="footerPrivacy">Privacitat</a>
+          <a href="legal.html#galetes" data-i18n="footerCookies">Galetes</a>
+        </nav>
         <span>© <span id="year"></span> Anna Creus</span>
       </footer>
     </section>
@@ -144,6 +149,10 @@
         <label for="bookingReason" data-i18n="bookingReason">Motiu de consulta (resum breu)</label>
         <textarea id="bookingReason" name="reason" rows="3" maxlength="1000" data-i18n-placeholder="bookingReasonPlaceholder" placeholder="Pots explicar breument què t’agradaria treballar..." required></textarea>
         <p class="booking-privacy" data-i18n="bookingPrivacy">Les teves dades s’utilitzaran únicament per gestionar aquesta reserva.</p>
+        <div class="booking-privacy-check">
+          <input id="bookingPrivacyAccepted" name="privacyAccepted" type="checkbox" required>
+          <label for="bookingPrivacyAccepted"><span data-i18n="bookingPrivacyAcknowledgement">He llegit i entès la</span> <a href="legal.html#privacitat" target="_blank" rel="noopener noreferrer" data-i18n="bookingPrivacyLink">política de privacitat</a>.</label>
+        </div>
       </form>
       <div class="booking-availability">
         <span class="availability-icon">◷</span>
