@@ -32,7 +32,12 @@ export async function onRequestPost({ request, env }) {
       ? "Hola " + record.name + ". Tu cita se ha modificado. Nueva cita: " + labels.date + " a las " + labels.time + ". Para modificarla o cancelarla hasta 24 horas antes, abre: " + manageUrl
       : "Hola " + record.name + ". La teva cita s'ha modificat. Nova cita: " + labels.date + " a les " + labels.time + ". Per modificar-la o cancel·lar-la fins a 24 hores abans, obre: " + manageUrl;
     const emailSent = await sendMail(env, record.email, es ? "Cambio de cita — Anna Creus" : "Canvi de cita — Anna Creus", html, textBody);
-    return json({ ok:true, date:labels.date, time:labels.time, emailSent });
+    const adminOldLabels = appointmentLabels(oldStart, ctx.timeZone, "ca");
+    const adminNewLabels = appointmentLabels(newStart, ctx.timeZone, "ca");
+    const adminHtml = "<p>S'ha modificat una cita.</p><p><strong>Pacient:</strong> " + escapeHtml(record.name) + "<br><strong>Correu:</strong> " + escapeHtml(record.email) + "<br><strong>Abans:</strong> " + adminOldLabels.date + " a les " + adminOldLabels.time + "<br><strong>Nova cita:</strong> " + adminNewLabels.date + " a les " + adminNewLabels.time + "</p>";
+    const adminText = "S'ha modificat una cita. Pacient: " + record.name + ". Correu: " + record.email + ". Abans: " + adminOldLabels.date + " a les " + adminOldLabels.time + ". Nova cita: " + adminNewLabels.date + " a les " + adminNewLabels.time + ".";
+    const adminNotificationSent = await sendMail(env, "ame.creus@gmail.com", "Cita modificada — Anna Creus", adminHtml, adminText);
+    return json({ ok:true, date:labels.date, time:labels.time, emailSent, adminNotificationSent });
   } catch (error) {
     console.error("Booking reschedule:", error?.message || "Unknown error");
     return json({ ok:false, message:"S'ha produït un error en modificar la cita." }, 500);
