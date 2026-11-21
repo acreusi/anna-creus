@@ -49,7 +49,7 @@ nav.querySelectorAll("a").forEach(link => link.addEventListener("click", () => {
 document.getElementById("year").textContent = new Date().getFullYear();
 
 const bookingAgeSelect = document.getElementById("bookingAge");
-for (let age = 0; age <= 120; age++) {
+for (let age = 0; age <= 100; age++) {
   const option = document.createElement("option");
   option.value = String(age);
   option.textContent = String(age);
