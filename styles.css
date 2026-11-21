@@ -97,3 +97,7 @@ button.calendar-day{cursor:pointer}
 .contact-inner .contact-cta:hover{background:#eeece5;transform:translateY(-2px)}
 
 
+
+
+/* Mobile: situar la frase de tancament a prop del text principal */
+@media(max-width:760px){.hero-bottom{position:relative;left:auto;right:auto;bottom:auto;justify-content:flex-start;margin-top:24px;padding:0 7vw}.hero-bottom .scroll-mark{display:none}}
