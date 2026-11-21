@@ -1,6 +1,6 @@
 (() => {
   const token=new URLSearchParams(location.search).get("token")||"", $=id=>document.getElementById(id);
-  let language="ca",timeZone="Europe/Madrid",currentStart=null,busy=[],selectedDate="",visibleMonth="";
+  let language="ca",timeZone="Europe/Madrid",currentStart=null,busy=[],selectedDate="",selectedStart="",visibleMonth="";
   const strings={
     ca:{eyebrow:"GESTIÓ DE LA CITA",title:"Gestiona la teva cita",intro:"Aquí pots consultar, modificar o cancel·lar la teva reserva.",loading:"Carregant la informació de la cita…",current:"La teva cita actual",date:"Tria una nova data",time:"Hores disponibles",choose:"Selecciona primer una data",none:"No hi ha hores disponibles aquest dia.",change:"Modificar la cita",cancel:"Cancel·lar la cita",note:"Pots modificar o cancel·lar la cita fins a 24 hores abans. Després d'aquest termini, contacta directament amb Anna.",invalid:"Aquest enllaç no és vàlid o la cita ja no està activa.",locked:"Ja no es pot modificar ni cancel·lar aquesta cita perquè falten menys de 24 hores. Contacta directament amb l'Anna.",changed:"La cita s'ha modificat correctament.",cancelled:"La cita s'ha cancel·lat correctament.",confirm:"Segur que vols cancel·lar aquesta cita?",error:"No s'ha pogut completar l'acció. Torna-ho a provar.",selectDate:"Selecciona una hora disponible",email:"T'enviarem un correu amb la confirmació del canvi.",monthError:"No s'ha pogut consultar la disponibilitat d'aquest mes.",available:"Disponible",partial:"Algunes hores ocupades",unavailable:"No disponible"},
     es:{eyebrow:"GESTIÓN DE LA CITA",title:"Gestiona tu cita",intro:"Aquí puedes consultar, modificar o cancelar tu reserva.",loading:"Cargando la información de la cita…",current:"Tu cita actual",date:"Elige una nueva fecha",time:"Horarios disponibles",choose:"Selecciona primero una fecha",none:"No hay horarios disponibles este día.",change:"Modificar la cita",cancel:"Cancelar la cita",note:"Puedes modificar o cancelar la cita hasta 24 horas antes. Después de ese plazo, contacta directamente con Anna.",invalid:"Este enlace no es válido o la cita ya no está activa.",locked:"Ya no se puede modificar ni cancelar esta cita porque faltan menos de 24 horas. Contacta directamente con Anna.",changed:"La cita se ha modificado correctamente.",cancelled:"La cita se ha cancelado correctamente.",confirm:"¿Seguro que quieres cancelar esta cita?",error:"No se ha podido completar la acción. Inténtalo de nuevo.",selectDate:"Selecciona un horario disponible",email:"Te enviaremos un correo con la confirmación del cambio.",monthError:"No se ha podido consultar la disponibilidad de este mes.",available:"Disponible",partial:"Algunas horas ocupadas",unavailable:"No disponible"}
@@ -30,13 +30,11 @@
     grid.innerHTML="";
     for(let i=0;i<firstWeekday;i++){const blank=document.createElement("span");blank.className="manage-calendar-day empty";grid.appendChild(blank);}
     for(let d=1;d<=days;d++){
-      const date=key(y,m,d),p=keyParts(date),start=dayStart(p,16,0),end=dayStart(p,19,20),weekday=parts(dayStart(p,12,0)).weekday,weekend=["Sat","Sun"].includes(weekday),options=slots(date),unavailable=weekend||date<localDate(Date.now())||!options.length,hasBusy=busy.some(e=>start<e.end&&end>e.start);
+      const date=key(y,m,d),p=keyParts(date),weekday=parts(dayStart(p,12,0)).weekday,weekend=["Sat","Sun"].includes(weekday),options=slots(date),unavailable=weekend||date<localDate(Date.now())||!options.length;
       const b=document.createElement("button");b.type="button";b.textContent=String(d);b.className="manage-calendar-day";
       if(unavailable)b.disabled=true;else b.classList.add("available");
-      if(hasBusy&&options.length)b.classList.add("partial");
       if(date===selectedDate)b.classList.add("selected");
-      b.setAttribute("aria-label",date+" — "+(unavailable?t("unavailable"):hasBusy?t("partial"):t("available")));
-      b.title=unavailable?t("unavailable"):hasBusy?t("partial"):t("available");
+      b.setAttribute("aria-label",date);
       b.addEventListener("click",()=>selectDay(date));grid.appendChild(b);
     }
     $("monthLabel").textContent=new Intl.DateTimeFormat(language==="es"?"es-ES":"ca-ES",{month:"long",year:"numeric"}).format(new Date(Date.UTC(y,m-1,15,12)));
@@ -44,23 +42,24 @@
     $("monthPrev").disabled=visibleMonth<=min;$("monthNext").disabled=visibleMonth>=max;
   }
   async function loadMonth(month){
-    if(visibleMonth&&visibleMonth!==month){selectedDate="";$("newTime").innerHTML="";$("newTime").disabled=true;$("rescheduleButton").disabled=true;}
+    if(visibleMonth&&visibleMonth!==month){selectedDate="";selectedStart="";$("newTime").innerHTML="";$("rescheduleButton").disabled=true;}
     visibleMonth=month;$("calendarDays").innerHTML="";
     const [y,m]=month.split("-").map(Number),start=dayStart({year:String(y),month:String(m).padStart(2,"0"),day:"01"},0,0),next=new Date(Date.UTC(y,m,1,12)),end=dayStart({year:String(next.getUTCFullYear()),month:String(next.getUTCMonth()+1).padStart(2,"0"),day:"01"},0,0);
     try{
       const r=await fetch("/api/google/availability?start="+encodeURIComponent(new Date(start).toISOString())+"&end="+encodeURIComponent(new Date(end).toISOString()),{cache:"no-store"}),data=await r.json();
       if(!r.ok||!data.ok)throw new Error(data.message||t("monthError"));
-      timeZone=data.timeZone||timeZone;busy=(data.busy||[]).map(e=>({start:e.allDay?start:Date.parse(e.start),end:e.allDay?end:Date.parse(e.end)}));renderCalendar();
+      timeZone=data.timeZone||timeZone;busy=(data.busy||[]).map(e=>e.allDay?({allDay:true,start:dayStart(keyParts(e.start),0,0),end:dayStart(keyParts(e.end),0,0)}):({allDay:false,start:Date.parse(e.start),end:Date.parse(e.end)}));renderCalendar();
       if(selectedDate&&selectedDate.slice(0,7)===visibleMonth)renderTimes();
     }catch(e){$("calendarDays").textContent=t("monthError");status(e.message||t("monthError"),true);}
   }
-  function selectDay(date){selectedDate=date;renderCalendar();renderTimes();}
+  function selectDay(date){selectedDate=date;selectedStart="";renderCalendar();renderTimes();}
   function renderTimes(){
-    const select=$("newTime"),button=$("rescheduleButton"),options=slots(selectedDate);select.innerHTML="";
-    button.disabled=true;
-    if(!selectedDate){select.add(new Option(t("choose"),""));select.disabled=true;return;}
-    if(!options.length){select.add(new Option(t("none"),""));select.disabled=true;return;}
-    select.add(new Option(t("selectDate"),""));options.forEach(ms=>select.add(new Option(time(ms),new Date(ms).toISOString())));select.disabled=false;
+    const list=$("newTime"),button=$("rescheduleButton"),options=slots(selectedDate);list.innerHTML="";button.disabled=true;selectedStart="";
+    if(!selectedDate){list.innerHTML='<p class="manage-time-hint">'+t("choose")+'</p>';return;}
+    const dayBusy=busy.filter(e=>!e.allDay&&localDate(e.start)===selectedDate);
+    const entries=[...dayBusy.map(e=>({ms:e.start,unavailable:true})),...options.map(ms=>({ms,unavailable:false}))].sort((a,b)=>a.ms-b.ms);
+    if(!entries.length){list.innerHTML='<p class="manage-time-hint">'+t("none")+'</p>';return;}
+    entries.forEach(entry=>{const b=document.createElement("button");b.type="button";b.className="manage-time-slot"+(entry.unavailable?" unavailable":"");b.textContent=time(entry.ms);if(entry.unavailable){b.disabled=true;}else{b.addEventListener("click",()=>{list.querySelectorAll("button").forEach(x=>x.classList.remove("selected"));b.classList.add("selected");selectedStart=new Date(entry.ms).toISOString();button.disabled=false;});}list.appendChild(b);});
   }
   async function init(){
     if(!token){$("loading").textContent=t("invalid");return;}
@@ -73,13 +72,12 @@
       if(!data.canManage){$("controls").classList.add("manage-hidden");status(data.message||t("locked"),true);return;}
       $("monthPrev").addEventListener("click",()=>{const [y,m]=visibleMonth.split("-").map(Number),d=new Date(Date.UTC(y,m-2,1));loadMonth(key(d.getUTCFullYear(),d.getUTCMonth()+1,1).slice(0,7));});
       $("monthNext").addEventListener("click",()=>{const [y,m]=visibleMonth.split("-").map(Number),d=new Date(Date.UTC(y,m,1));loadMonth(key(d.getUTCFullYear(),d.getUTCMonth()+1,1).slice(0,7));});
-      $("newTime").addEventListener("change",()=>{$("rescheduleButton").disabled=!$("newTime").value;});
       $("rescheduleButton").addEventListener("click",reschedule);$("cancelButton").addEventListener("click",cancel);
       const now=new Date();await loadMonth(key(now.getFullYear(),now.getMonth()+1,1).slice(0,7));
     }catch(e){$("loading").textContent=t("error");}
   }
   async function reschedule(){
-    const start=$("newTime").value;if(!start)return;$("rescheduleButton").disabled=true;status("");
+    const start=selectedStart;if(!start)return;$("rescheduleButton").disabled=true;status("");
     try{const r=await fetch("/api/booking/reschedule",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({token,start})}),data=await r.json();if(!r.ok||!data.ok)throw new Error(data.message||t("error"));$("appointmentDate").textContent=data.date;$("appointmentTime").textContent=data.time;$("controls").classList.add("manage-hidden");status(t("changed")+" "+(data.emailSent?t("email"):""));}
     catch(e){status(e.message||t("error"),true);$("rescheduleButton").disabled=false;}
   }
