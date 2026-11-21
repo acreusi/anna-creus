@@ -30,6 +30,11 @@ function setLanguage(lang) {
     button.setAttribute("aria-pressed", String(active));
   });
   document.querySelector(".menu-toggle").setAttribute("aria-label", lang === "ca" ? "Obrir menú" : "Abrir menú");
+  const legalSections = {footerLegal:"avis-legal",footerPrivacy:"privacitat",footerCookies:"galetes"};
+  Object.entries(legalSections).forEach(([key,section])=>{
+    const link=document.querySelector('[data-i18n="'+key+'"]');
+    if(link) link.href="legal.html?lang="+lang+"#"+section;
+  });
   document.querySelectorAll("[data-i18n-placeholder]").forEach(el => {
     const key = el.dataset.i18nPlaceholder;
     if (copy[key]) el.placeholder = copy[key];
