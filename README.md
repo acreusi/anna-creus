@@ -23,3 +23,5 @@ Es pot connectar aquest repositori a Cloudflare Pages per desplegar automàticam
 ## Identitat visual
 
 La paleta inicial és una aproximació a la identitat existent: blau verdós suau, blanc trencat i text fosc. Cal confirmar els codis exactes abans de donar-la per definitiva.
+
+<!-- Cloudflare Pages deployment trigger: 2026-11-21 -->
