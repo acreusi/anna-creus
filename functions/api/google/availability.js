@@ -31,7 +31,7 @@ export async function onRequestGet({ request, env }) {
 
   const rangeMs = endMs - startMs;
   const now = Date.now();
-  const maxRange = 31 * 24 * 60 * 60 * 1000;
+  const maxRange = 32 * 24 * 60 * 60 * 1000;
   const maxFuture = 370 * 24 * 60 * 60 * 1000;
   if (rangeMs > maxRange || endMs > now + maxFuture) {
     return json({ ok: false, message: "El període consultat no és vàlid. Es poden consultar fins a 31 dies dins dels propers 12 mesos." }, 400);
