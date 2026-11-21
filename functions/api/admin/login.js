@@ -18,8 +18,16 @@ export async function onRequestPost({ request, env }) {
   try { body = await request.json(); } catch { return json({ ok: false, message: "Dades no vàlides." }, 400); }
   const username = String(body.username || "").slice(0, 120);
   const password = String(body.password || "").slice(0, 300);
-  const userOK = username === env.ADMIN_USERNAME;
-  const passOK = password.length > 0 && password === env.ADMIN_PASSWORD;
+  const [userDigest, expectedUserDigest, passDigest, expectedPassDigest] = await Promise.all([
+    digest(username), digest(env.ADMIN_USERNAME), digest(password), digest(env.ADMIN_PASSWORD)
+  ]);
+  const constantTimeEqual = (a, b) => {
+    let diff = a.length ^ b.length;
+    for (let i = 0; i < Math.max(a.length, b.length); i++) diff |= (a[i % a.length] || 0) ^ (b[i % b.length] || 0);
+    return diff === 0;
+  };
+  const userOK = constantTimeEqual(userDigest, expectedUserDigest);
+  const passOK = password.length > 0 && constantTimeEqual(passDigest, expectedPassDigest);
   if (!userOK || !passOK) {
     attempts++;
     await env.GOOGLE_TOKEN_STORE.put(rateKey, String(attempts), { expirationTtl: 900 });
