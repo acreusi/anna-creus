@@ -54,16 +54,35 @@
         <div class="welcome-panel"><div><p class="eyebrow">EL TEU ESPAI DE TREBALL</p><h2>Hola, Anna.</h2><p>Tot el que necessites per organitzar la consulta, en un mateix lloc.</p></div><div class="welcome-mark">AC<span>·</span></div></div>
         <div class="section-heading"><div><p class="eyebrow">RESUM</p><h2>La teva activitat</h2></div><span class="muted small">Vista inicial</span></div>
         <div class="summary-grid">
-          <article class="summary-card"><span class="summary-icon">▦</span><p>Pròximes cites</p><strong>—</strong><small>El calendari es connectarà en una fase següent</small></article>
+          <article class="summary-card"><span class="summary-icon">▦</span><p>Pròximes cites</p><strong>—</strong><small>Consulta-les al calendari privat</small></article>
           <article class="summary-card"><span class="summary-icon">♧</span><p>Pacients</p><strong>0</strong><small>Encara no hi ha fitxes creades</small></article>
           <article class="summary-card"><span class="summary-icon">▤</span><p>Documents</p><strong>—</strong><small>Espai pendent de configurar</small></article>
         </div>
-        <div class="notice-panel"><span class="notice-icon">i</span><div><strong>Espai en construcció</strong><p>Aquesta és la primera estructura del teu panell privat. Anirem activant les funcions progressivament. De moment no hi introdueixis dades reals de pacients ni informació clínica.</p></div></div>
+        <div class="notice-panel"><span class="notice-icon">i</span><div><strong>Espai en construcció</strong><p>El calendari ja es pot consultar. La resta de funcions s'aniran activant progressivament. No hi introdueixis encara dades reals de pacients ni informació clínica.</p></div></div>
       </section>
 
       <section class="view-section" id="section-calendar">
-        <div class="section-heading"><div><p class="eyebrow">ORGANITZACIÓ</p><h2>Calendari</h2></div></div>
-        <div class="empty-panel"><span class="empty-icon">▦</span><h3>El teu calendari de consulta</h3><p>En el següent pas connectarem aquesta vista amb el calendari de Google perquè puguis consultar les cites, veure'n els detalls administratius i gestionar la teva agenda des d'aquí.</p><span class="coming-label">PENDENT DE CONNECTAR</span></div>
+        <div class="section-heading"><div><p class="eyebrow">ORGANITZACIÓ</p><h2>Calendari de cites</h2></div><span class="muted small" id="calendarStatus" aria-live="polite">Preparant el calendari…</span></div>
+        <div class="calendar-toolbar">
+          <div class="calendar-month-controls">
+            <button class="calendar-nav" id="calendarPrev" type="button" aria-label="Mes anterior">‹</button>
+            <h3 id="calendarMonthLabel">—</h3>
+            <button class="calendar-nav" id="calendarNext" type="button" aria-label="Mes següent">›</button>
+          </div>
+          <button class="calendar-today" id="calendarToday" type="button">Avui</button>
+        </div>
+        <div class="calendar-layout">
+          <div class="calendar-board">
+            <div class="calendar-weekdays" aria-hidden="true"><span>Dl</span><span>Dt</span><span>Dc</span><span>Dj</span><span>Dv</span><span>Ds</span><span>Dg</span></div>
+            <div class="calendar-grid" id="calendarGrid" aria-label="Dies del mes"></div>
+          </div>
+          <aside class="calendar-agenda">
+            <p class="eyebrow">AGENDA DEL DIA</p>
+            <h3 id="calendarSelectedDate">Selecciona un dia</h3>
+            <div id="calendarEvents" class="calendar-events"><p class="muted">Carregant cites…</p></div>
+          </aside>
+        </div>
+        <p class="calendar-note">Es mostren les cites del calendari de Google connectat (actualment, el calendari de proves). Per ara només es visualitzen el nom, el dia i l'hora; els motius de consulta no es mostren.</p>
       </section>
       <section class="view-section" id="section-patients">
         <div class="section-heading"><div><p class="eyebrow">GESTIÓ</p><h2>Pacients</h2></div></div>
