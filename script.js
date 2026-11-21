@@ -53,6 +53,16 @@ nav.querySelectorAll("a").forEach(link => link.addEventListener("click", () => {
 }));
 document.getElementById("year").textContent = new Date().getFullYear();
 
+// Mostra l'accés professional només si hi ha una sessió autenticada.
+fetch("/api/admin/session", { credentials: "same-origin" })
+  .then(response => response.ok ? response.json() : null)
+  .then(session => {
+    if (session?.ok) {
+      document.querySelector(".footer-professional-link")?.removeAttribute("hidden");
+    }
+  })
+  .catch(() => {});
+
 const bookingAgeSelect = document.getElementById("bookingAge");
 for (let age = 0; age <= 100; age++) {
   const option = document.createElement("option");
