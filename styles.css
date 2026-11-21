@@ -102,3 +102,7 @@ button.calendar-day{cursor:pointer}
 
 /* Mobile: alinear el tancament del titular amb el peu de la composició gràfica */
 @media(max-width:760px){.hero-bottom{position:absolute;left:7vw;right:7vw;bottom:25px;display:flex;justify-content:flex-start;align-items:center;padding:0;z-index:3}.hero-bottom .scroll-mark{display:none}}
+
+/* Discret accés a l’àrea professional des del peu de pàgina */
+.footer-professional-link{opacity:.72;font-size:11px;text-decoration:none!important}
+.footer-professional-link:hover{opacity:1;text-decoration:underline!important}
