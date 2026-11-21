@@ -168,8 +168,11 @@
       document.documentElement.lang=lang;
       document.querySelectorAll("[data-legal-copy]").forEach(block=>block.hidden=block.dataset.legalCopy!==lang);
       legalButtons.forEach(button=>{const active=button.dataset.legalLang===lang;button.classList.toggle("active",active);button.setAttribute("aria-pressed",String(active));});
+      if(location.hash) setTimeout(()=>document.querySelector(location.hash)?.scrollIntoView(),0);
     }
     legalButtons.forEach(button=>button.addEventListener("click",()=>setLegalLanguage(button.dataset.legalLang)));
+    const requestedLanguage=new URLSearchParams(location.search).get("lang");
+    setLegalLanguage(requestedLanguage==="es"?"es":"ca");
     document.getElementById("legalYear").textContent=new Date().getFullYear();
   </script>
 </body>
