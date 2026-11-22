@@ -25,8 +25,9 @@ export async function onRequestPatch({ request, env }) {
     if (action === "add-note") {
       const title = String(body.title || "").trim();
       const noteBody = String(body.body || "").trim();
-      if (!title || title.length > 120 || !noteBody || noteBody.length > 10000) return json({ ok:false, message:"Revisa el títol i el contingut de la nota." }, 400);
-      patient.notes.push({ id:crypto.randomUUID(), date:now.slice(0,10), createdAt:now, updatedAt:now, title, body:noteBody });
+      const noteDate = String(body.date || now.slice(0,10));
+      if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(noteDate) || !title || title.length > 120 || !noteBody || noteBody.length > 10000) return json({ ok:false, message:"Revisa la data, el títol i el contingut de la nota." }, 400);
+      patient.notes.push({ id:crypto.randomUUID(), date:noteDate, appointmentEventId:String(body.eventId || ""), createdAt:now, updatedAt:now, title, body:noteBody });
     } else if (action === "edit-note") {
       const note = patient.notes.find(item => item.id === body.noteId);
       const title = String(body.title || "").trim();
