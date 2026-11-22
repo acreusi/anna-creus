@@ -187,6 +187,8 @@ async function loadCalendar(force = false) {
   calendarState.loading = true;
   calendarStatus.textContent = "Carregant…";
   calendarEvents.replaceChildren();
+  // Render the month grid independently of Google Calendar availability.
+  renderCalendar();
   const start = zonedMidnightUtc(year, month, 1);
   const end = zonedMidnightUtc(year, month + 1, 1);
   const params = new URLSearchParams({
