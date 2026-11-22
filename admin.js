@@ -83,6 +83,7 @@ document.querySelectorAll(".side-link").forEach(button => {
     const titles = { overview: "Inici", calendar: "Calendari", patients: "Pacients", documents: "Documents", settings: "Configuració" };
     document.getElementById("pageTitle").textContent = titles[section] || "Inici";
     if (section === "calendar") loadCalendar();
+    if (section === "patients") loadPatients();
   });
 });
 
@@ -246,19 +247,7 @@ checkSession();
 
 
 // Patient records — visual prototype only. No patient data is sent to or stored on a server.
-const demoPatients = [{
-  id: "demo-001",
-  name: "Júlia Serra",
-  email: "julia.exemple@email.test",
-  age: 28,
-  modality: "Online",
-  status: "Primera visita pendent",
-  created: "2026-11-10",
-  reason: "Dificultats per gestionar l'ansietat en situacions laborals i sensació de preocupació constant.",
-  appointments: [{ date: "2026-11-10", time: "17:00", type: "Primera visita", status: "Realitzada" }, { date: "2026-11-17", time: "17:00", type: "Sessió de seguiment", status: "Realitzada" }, { date: "2026-11-24", time: "17:00", type: "Sessió de seguiment", status: "Programada" }],
-  notes: [{ date: "2026-11-10", title: "Primera visita · exemple", body: "Anotació fictícia per mostrar com es veuria el seguiment.\n\nObjectius inicials: explorar les situacions que generen malestar i identificar recursos d'afrontament." }]
-}];
-let patientRecords = demoPatients.map(patient => ({ ...patient, appointments: [...patient.appointments], notes: [...patient.notes] }));
+let patientRecords = [];
 let activePatientId = null;
 
 const patientList = document.getElementById("patientList");
@@ -279,6 +268,19 @@ function createText(tag, className, value) {
   if (className) element.className = className;
   element.textContent = value ?? "";
   return element;
+}
+async function loadPatients() {
+  try {
+    const response = await fetch("/api/admin/patients", { credentials:"same-origin", cache:"no-store" });
+    if (response.status === 401) { showLogin(); return; }
+    const data = await response.json();
+    if (!response.ok || !data.ok) throw new Error(data.message || "No s'han pogut carregar els pacients.");
+    patientRecords = Array.isArray(data.patients) ? data.patients : [];
+    renderPatientList();
+loadPatients();
+  } catch (error) {
+    patientList.replaceChildren(createText("p", "patient-empty-search", error.message || "No s'han pogut carregar els pacients."));
+  }
 }
 function renderPatientList() {
   const query = (patientSearch.value || "").trim().toLocaleLowerCase("ca");
