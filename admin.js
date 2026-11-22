@@ -387,22 +387,38 @@ function renderPatientDetail() {
   const visits = document.createElement("section"); visits.className = "patient-card patient-history-card";
   visits.append(createText("p","eyebrow","HISTORIAL"),createText("h3","","Cites i visites"));
   const appointmentList = document.createElement("div"); appointmentList.className = "patient-timeline";
-  [...patient.appointments].sort((a,b)=>b.date.localeCompare(a.date)).forEach(appointment => {
-    const item = document.createElement("div"); item.className = "timeline-item";
-    item.append(createText("strong","","" + safeDateLabel(appointment.date)),createText("span","",appointment.time + " · " + appointment.type));
-    const status = document.createElement("select"); status.className = "appointment-status-select";
-    ["Programada","Realitzada","No presentada","Cancel·lada"].forEach(value => { const option=document.createElement("option"); option.value=value; option.textContent=value; status.append(option); });
-    status.value = appointment.status || "Programada";
-    status.addEventListener("change", async () => {
-      status.disabled = true;
-      try { await savePatientChange({action:"appointment-status",eventId:appointment.eventId,status:status.value}); }
-      catch(error) { alert(error.message); status.value=appointment.status || "Programada"; }
-      finally { status.disabled = false; }
+  const sortedAppointments = [...patient.appointments].sort((a,b)=>b.date.localeCompare(a.date));
+  let showAllVisits = false;
+  const renderAppointments = () => {
+    appointmentList.replaceChildren();
+    const visibleAppointments = showAllVisits ? sortedAppointments : sortedAppointments.slice(0,4);
+    visibleAppointments.forEach(appointment => {
+      const item = document.createElement("div"); item.className = "timeline-item";
+      item.append(createText("strong","","" + safeDateLabel(appointment.date)),createText("span","",appointment.time + " · " + appointment.type));
+      const status = document.createElement("select"); status.className = "appointment-status-select";
+      ["Programada","Realitzada","No presentada","Cancel·lada"].forEach(value => { const option=document.createElement("option"); option.value=value; option.textContent=value; status.append(option); });
+      status.value = appointment.status || "Programada";
+      status.addEventListener("change", async () => {
+        status.disabled = true;
+        try { await savePatientChange({action:"appointment-status",eventId:appointment.eventId,status:status.value}); renderPatientDetail(); }
+        catch(error) { alert(error.message); status.value=appointment.status || "Programada"; status.disabled=false; }
+      });
+      item.append(status); appointmentList.append(item);
     });
-    item.append(status); appointmentList.append(item);
-  });
-  if (!patient.appointments.length) appointmentList.append(createText("p","muted","Encara no hi ha visites registrades."));
-  visits.append(createText("p","history-count",patient.appointments.length + (patient.appointments.length === 1 ? " visita en total" : " visites en total")));
+  };
+  if (!sortedAppointments.length) appointmentList.append(createText("p","muted","Encara no hi ha visites registrades."));
+  visits.append(createText("p","history-count",sortedAppointments.length + (sortedAppointments.length === 1 ? " visita en total" : " visites en total")));
+  renderAppointments();
+  if (sortedAppointments.length > 4) {
+    const historyToggle = createText("button","history-toggle","Veure tot l'historial");
+    historyToggle.type = "button";
+    historyToggle.addEventListener("click", () => {
+      showAllVisits = !showAllVisits;
+      renderAppointments();
+      historyToggle.textContent = showAllVisits ? "Mostrar menys visites" : "Veure tot l'historial";
+    });
+    visits.append(historyToggle);
+  }
   visits.append(appointmentList); patientDetail.append(visits);
 
   const therapy = document.createElement("section"); therapy.className = "patient-card therapy-card";
