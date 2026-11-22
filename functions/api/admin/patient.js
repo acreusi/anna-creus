@@ -43,8 +43,8 @@ export async function onRequestPatch({ request, env }) {
       const appointment = patient.appointments.find(item => item.eventId && item.eventId === body.eventId);
       if (!appointment) return json({ ok:false, message:"No s'ha trobat la visita." }, 404);
       appointment.status = body.status;
-      const firstVisit = patient.appointments.find(item => item.type === "Primera visita") || patient.appointments[0];
-      if (firstVisit && firstVisit.status === "Realitzada" && patient.status === "Primera visita pendent") patient.status = "En seguiment";
+      const hasCompletedFirstVisit = patient.appointments.some(item => item.type === "Primera visita" && item.status === "Realitzada");
+      if (hasCompletedFirstVisit && patient.status === "Primera visita pendent") patient.status = "En seguiment";
     } else if (action === "patient-status") {
       if (!statuses.includes(body.status)) return json({ ok:false, message:"Estat de pacient no vàlid." }, 400);
       patient.status = body.status;
