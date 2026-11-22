@@ -246,14 +246,14 @@ checkSession();
 // Patient records — visual prototype only. No patient data is sent to or stored on a server.
 const demoPatients = [{
   id: "demo-001",
-  name: "Júlia Serra (exemple)",
+  name: "Júlia Serra",
   email: "julia.exemple@email.test",
   age: 28,
   modality: "Online",
   status: "Primera visita pendent",
   created: "2026-11-10",
   reason: "Dificultats per gestionar l'ansietat en situacions laborals i sensació de preocupació constant.",
-  appointments: [{ date: "2026-11-10", time: "17:00", type: "Primera visita", status: "Programada" }],
+  appointments: [{ date: "2026-11-10", time: "17:00", type: "Primera visita", status: "Realitzada" }, { date: "2026-11-17", time: "17:00", type: "Sessió de seguiment", status: "Realitzada" }, { date: "2026-11-24", time: "17:00", type: "Sessió de seguiment", status: "Programada" }],
   notes: [{ date: "2026-11-10", title: "Primera visita · exemple", body: "Anotació fictícia per mostrar com es veuria el seguiment.\n\nObjectius inicials: explorar les situacions que generen malestar i identificar recursos d'afrontament." }]
 }];
 let patientRecords = demoPatients.map(patient => ({ ...patient, appointments: [...patient.appointments], notes: [...patient.notes] }));
