@@ -78,6 +78,11 @@ loginForm.addEventListener("submit", async event => {
 document.querySelectorAll(".side-link").forEach(button => {
   button.addEventListener("click", () => {
     const section = button.dataset.section;
+    if (section === "patients" && !patientDetailView.hidden) {
+      patientDetailView.hidden = true;
+      patientsListView.hidden = false;
+      activePatientId = null;
+    }
     document.querySelectorAll(".side-link").forEach(item => item.classList.toggle("active", item === button));
     document.querySelectorAll(".view-section").forEach(item => item.classList.toggle("active", item.id === "section-" + section));
     const titles = { overview: "Inici", calendar: "Calendari", patients: "Pacients", documents: "Documents", settings: "Configuració" };
@@ -140,35 +145,6 @@ function renderSelectedDay() {
       name.title = "Aquesta cita encara no està vinculada a cap fitxa.";
     }
     item.append(time, name);
-    const appointment = linkedPatient?.appointments?.find(entry => entry.eventId === event.id);
-    if (appointment) {
-      const status = document.createElement("select"); status.className = "appointment-status-select calendar-appointment-status";
-      ["Programada","Realitzada","No presentada","Cancel·lada"].forEach(value => { const option=document.createElement("option"); option.value=value; option.textContent=value; status.append(option); });
-      status.value = appointment.status || "Programada";
-      status.addEventListener("change", async () => {
-        status.disabled = true;
-        try {
-          const updatedPatient = await savePatientChange({patientId:linkedPatient.id,action:"appointment-status",eventId:event.id,status:status.value});
-          linkedPatient.status = updatedPatient.status;
-          patientState.value = updatedPatient.status || linkedPatient.status;
-          calendarStatus.textContent = "Canvis desats";
-        } catch(error) { alert(error.message); status.value=appointment.status || "Programada"; }
-        finally { status.disabled = false; }
-      });
-      item.append(createText("small","calendar-control-label","Estat de la visita"),status);
-      const patientState = document.createElement("select"); patientState.className = "patient-status-select calendar-patient-status";
-      ["Primera visita pendent","En seguiment","Pendent de reprendre","Alta"].forEach(value => { const option=document.createElement("option"); option.value=value; option.textContent=value; patientState.append(option); });
-      patientState.value = linkedPatient.status || "Primera visita pendent";
-      patientState.addEventListener("change", async () => {
-        patientState.disabled = true;
-        try {
-          const updatedPatient = await savePatientChange({patientId:linkedPatient.id,action:"patient-status",status:patientState.value});
-          linkedPatient.status = updatedPatient.status;
-        } catch(error) { alert(error.message); patientState.value=linkedPatient.status || "Primera visita pendent"; }
-        finally { patientState.disabled = false; }
-      });
-      item.append(createText("small","calendar-control-label","Estat del pacient"),patientState);
-    }
     calendarEvents.append(item);
   }
 }
@@ -375,7 +351,7 @@ function renderPatientDetail() {
   const titleWrap = document.createElement("div");
   titleWrap.append(createText("p", "eyebrow", "FITXA DE PACIENT"), createText("h2", "", patient.name));
   const patientStatus = document.createElement("select"); patientStatus.className = "patient-status-select";
-  ["Primera visita pendent","En seguiment","Pendent de reprendre","Alta"].forEach(value => { const option=document.createElement("option"); option.value=value; option.textContent=value; patientStatus.append(option); });
+  ["Primera visita pendent","En seguiment","Alta"].forEach(value => { const option=document.createElement("option"); option.value=value; option.textContent=value; patientStatus.append(option); });
   patientStatus.value = patient.status || "Primera visita pendent";
   patientStatus.addEventListener("change", async () => {
     patientStatus.disabled = true;
@@ -410,7 +386,7 @@ function renderPatientDetail() {
       const item = document.createElement("div"); item.className = "timeline-item";
       item.append(createText("strong","","" + safeDateLabel(appointment.date)),createText("span","",appointment.time + " · " + appointment.type));
       const status = document.createElement("select"); status.className = "appointment-status-select";
-      ["Programada","Realitzada","No presentada","Cancel·lada"].forEach(value => { const option=document.createElement("option"); option.value=value; option.textContent=value; status.append(option); });
+      ["Programada","Realitzada","No presentada"].forEach(value => { const option=document.createElement("option"); option.value=value; option.textContent=value; status.append(option); });
       status.value = appointment.status || "Programada";
       status.addEventListener("change", async () => {
         status.disabled = true;
@@ -464,11 +440,23 @@ function renderPatientDetail() {
     const actions = document.createElement("div"); actions.className = "therapy-note-actions";
     const edit = createText("button","","Modificar"); edit.type = "button"; edit.className = "note-action";
     edit.addEventListener("click", () => {
-      const title = prompt("Títol de la nota:", note.title); if (title === null) return;
-      const body = prompt("Contingut de la nota:", note.body); if (body === null) return;
-      if (!title.trim() || !body.trim()) { alert("El títol i el contingut no poden quedar buits."); return; }
-      edit.disabled = true;
-      savePatientChange({action:"edit-note",noteId:note.id,title:title.trim(),body:body.trim()}).then(renderPatientDetail).catch(error=>alert(error.message)).finally(()=>{edit.disabled=false;});
+      const editor = document.createElement("form"); editor.className = "therapy-note-editor";
+      const titleInput = document.createElement("input"); titleInput.value = note.title; titleInput.maxLength = 120; titleInput.required = true; titleInput.setAttribute("aria-label","Títol de la nota");
+      const bodyInput = document.createElement("textarea"); bodyInput.value = note.body; bodyInput.maxLength = 10000; bodyInput.rows = 5; bodyInput.required = true; bodyInput.setAttribute("aria-label","Contingut de la nota");
+      const editorActions = document.createElement("div"); editorActions.className = "therapy-note-editor-actions";
+      const save = createText("button","","Desar canvis"); save.type = "submit"; save.className = "patient-primary-button";
+      const cancel = createText("button","","Cancel·lar"); cancel.type = "button"; cancel.className = "note-action";
+      cancel.addEventListener("click", () => { editor.replaceWith(item); });
+      editorActions.append(save,cancel); editor.append(titleInput,bodyInput,editorActions);
+      editor.addEventListener("submit", async event => {
+        event.preventDefault();
+        if (!titleInput.value.trim() || !bodyInput.value.trim()) return;
+        save.disabled = true;
+        try { await savePatientChange({action:"edit-note",noteId:note.id,title:titleInput.value.trim(),body:bodyInput.value.trim()}); renderPatientDetail(); }
+        catch(error) { alert(error.message); save.disabled = false; }
+      });
+      item.replaceChildren(editor);
+      titleInput.focus();
     });
     const remove = createText("button","","Eliminar"); remove.type = "button"; remove.className = "note-action note-delete";
     remove.addEventListener("click", () => {
