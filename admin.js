@@ -380,11 +380,27 @@ function renderPatientDetail() {
   });
   therapy.append(noteForm);
   const notes = document.createElement("div"); notes.className = "therapy-notes";
-  [...patient.notes].sort((a,b)=>b.date.localeCompare(a.date)).forEach(note => {
+  [...patient.notes].sort((a,b)=>String(b.updatedAt || b.date || "").localeCompare(String(a.updatedAt || a.date || ""))).forEach(note => {
     const item = document.createElement("article"); item.className = "therapy-note";
     const head = document.createElement("div"); head.className = "therapy-note-head";
     head.append(createText("strong","",note.title),createText("time","",safeDateLabel(note.date)));
-    item.append(head,createText("p","",note.body)); notes.append(item);
+    item.append(head,createText("p","",note.body));
+    const actions = document.createElement("div"); actions.className = "therapy-note-actions";
+    const edit = createText("button","","Modificar"); edit.type = "button"; edit.className = "note-action";
+    edit.addEventListener("click", () => {
+      const title = prompt("Títol de la nota:", note.title); if (title === null) return;
+      const body = prompt("Contingut de la nota:", note.body); if (body === null) return;
+      if (!title.trim() || !body.trim()) { alert("El títol i el contingut no poden quedar buits."); return; }
+      edit.disabled = true;
+      savePatientChange({action:"edit-note",noteId:note.id,title:title.trim(),body:body.trim()}).then(renderPatientDetail).catch(error=>alert(error.message)).finally(()=>{edit.disabled=false;});
+    });
+    const remove = createText("button","","Eliminar"); remove.type = "button"; remove.className = "note-action note-delete";
+    remove.addEventListener("click", () => {
+      if (!confirm("Vols eliminar aquesta anotació? Aquesta acció no es pot desfer.")) return;
+      remove.disabled = true;
+      savePatientChange({action:"delete-note",noteId:note.id}).then(renderPatientDetail).catch(error=>alert(error.message)).finally(()=>{remove.disabled=false;});
+    });
+    actions.append(edit,remove); item.append(actions); notes.append(item);
   });
   if (!patient.notes.length) notes.append(createText("p","muted","Encara no hi ha anotacions. Pots afegir la primera sessió aquí."));
   therapy.append(notes); patientDetail.append(therapy);
