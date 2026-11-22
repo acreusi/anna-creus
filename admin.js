@@ -153,7 +153,17 @@ function renderSelectedDay() {
         } catch(error) { alert(error.message); status.value=appointment.status || "Programada"; }
         finally { status.disabled = false; }
       });
-      item.append(status);
+      item.append(createText("small","calendar-control-label","Estat de la visita"),status);
+      const patientState = document.createElement("select"); patientState.className = "patient-status-select calendar-patient-status";
+      ["Primera visita pendent","En seguiment","Pendent de reprendre","Alta"].forEach(value => { const option=document.createElement("option"); option.value=value; option.textContent=value; patientState.append(option); });
+      patientState.value = linkedPatient.status || "Primera visita pendent";
+      patientState.addEventListener("change", async () => {
+        patientState.disabled = true;
+        try { await savePatientChange({patientId:linkedPatient.id,action:"patient-status",status:patientState.value}); }
+        catch(error) { alert(error.message); patientState.value=linkedPatient.status || "Primera visita pendent"; }
+        finally { patientState.disabled = false; }
+      });
+      item.append(createText("small","calendar-control-label","Estat del pacient"),patientState);
     }
     calendarEvents.append(item);
   }
