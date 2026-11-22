@@ -5,8 +5,8 @@ export async function onRequestPost({ request, env }) {
   const calendarId=await env.GOOGLE_TOKEN_STORE.get("google_calendar_id"),refreshToken=await env.GOOGLE_TOKEN_STORE.get("google_calendar_refresh_token"),timeZone=await env.GOOGLE_TOKEN_STORE.get("google_calendar_timezone")||"Europe/Madrid";
   if(!calendarId||!refreshToken)return json({ok:false,message:"El calendari encara no està configurat."},409);
   let body;try{body=await request.json();}catch{return json({ok:false,message:"La sol·licitud no és vàlida."},400);}
-  const name=String(body.name||"").trim().slice(0,100),email=String(body.email||"").trim().slice(0,254),age=Number(body.age),reason=String(body.reason||"").trim().slice(0,1000),startMs=Date.parse(body.start||"");
-  if(!name||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||!Number.isInteger(age)||age<0||age>120||!reason||!Number.isFinite(startMs))return json({ok:false,message:"Revisa el nom, el correu, l'edat i l'hora seleccionada."},400);
+  const name=String(body.name||"").trim().slice(0,100),email=String(body.email||"").trim().slice(0,254),age=Number(body.age),modality=String(body.modality||""),reason=String(body.reason||"").trim().slice(0,1000),startMs=Date.parse(body.start||"");
+  if(!name||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)||!Number.isInteger(age)||age<0||age>120||!["presencial","online"].includes(modality)||!reason||!Number.isFinite(startMs))return json({ok:false,message:"Revisa el nom, el correu, l'edat, la modalitat i l'hora seleccionada."},400);
   if(startMs<Date.now()||startMs>Date.now()+370*86400000)return json({ok:false,message:"La data seleccionada ja no és vàlida."},400);
   const parts=Object.fromEntries(new Intl.DateTimeFormat("en-GB",{timeZone,year:"numeric",month:"2-digit",day:"2-digit",weekday:"short"}).formatToParts(new Date(startMs)).map(x=>[x.type,x.value]));
   if(["Sat","Sun"].includes(parts.weekday))return json({ok:false,message:"La consulta està tancada aquest dia."},400);
@@ -31,7 +31,7 @@ export async function onRequestPost({ request, env }) {
 
     const managementToken = await createToken();
     const tokenKey = "booking_token:" + await hashToken(managementToken);
-    const bookingRecord = { eventId:inserted.id, calendarId, startMs, name, email, age, language:body.language === "es" ? "es" : "ca", status:"active", createdAt:Date.now() };
+    const bookingRecord = { eventId:inserted.id, calendarId, startMs, name, email, age, modality, language:body.language === "es" ? "es" : "ca", status:"active", createdAt:Date.now() };
     try {
       await env.GOOGLE_TOKEN_STORE.put(tokenKey, JSON.stringify(bookingRecord), { expirationTtl:450 * 24 * 60 * 60 });
     } catch (error) {
