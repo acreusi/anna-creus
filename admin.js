@@ -446,7 +446,7 @@ function renderPatientDetail() {
       const editorActions = document.createElement("div"); editorActions.className = "therapy-note-editor-actions";
       const save = createText("button","","Desar canvis"); save.type = "submit"; save.className = "patient-primary-button";
       const cancel = createText("button","","Cancel·lar"); cancel.type = "button"; cancel.className = "note-action";
-      cancel.addEventListener("click", () => { editor.replaceWith(item); });
+      cancel.addEventListener("click", () => { renderPatientDetail(); });
       editorActions.append(save,cancel); editor.append(titleInput,bodyInput,editorActions);
       editor.addEventListener("submit", async event => {
         event.preventDefault();
