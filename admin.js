@@ -378,6 +378,7 @@ function renderPatientDetail() {
   visits.append(createText("p","eyebrow","HISTORIAL"),createText("h3","","Cites i visites"));
   const appointmentList = document.createElement("div"); appointmentList.className = "patient-timeline";
   const sortedAppointments = [...patient.appointments].sort((a,b)=>b.date.localeCompare(a.date));
+  let selectedAppointmentEventId = "";
   sortedAppointments.forEach(appointment => {
     const item = document.createElement("div"); item.className = "timeline-item";
     const sessionButton = createText("button","session-note-link",safeDateLabel(appointment.date) + " · " + (appointment.time || "") + " · " + (appointment.type || "Sessió"));
@@ -392,6 +393,7 @@ function renderPatientDetail() {
           setTimeout(() => target.classList.remove("therapy-note-highlight"), 1800);
         }
       } else {
+        selectedAppointmentEventId = appointment.eventId || "";
         noteDate.value = appointment.date;
         noteTitle.value = appointment.type === "Primera visita" ? "Primera visita" : "Sessió de seguiment";
         noteBody.focus();
@@ -429,7 +431,7 @@ function renderPatientDetail() {
     const values = new FormData(noteForm);
     saveNote.disabled = true;
     try {
-      await savePatientChange({action:"add-note",date:String(values.get("date")),title:String(values.get("title")).trim(),body:String(values.get("body")).trim()});
+      await savePatientChange({action:"add-note",date:String(values.get("date")),eventId:selectedAppointmentEventId,title:String(values.get("title")).trim(),body:String(values.get("body")).trim()});
       renderPatientDetail();
     } catch(error) { alert(error.message); }
     finally { saveNote.disabled = false; }
