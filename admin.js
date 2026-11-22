@@ -161,8 +161,10 @@ function renderSelectedDay() {
       patientState.value = linkedPatient.status || "Primera visita pendent";
       patientState.addEventListener("change", async () => {
         patientState.disabled = true;
-        try { await savePatientChange({patientId:linkedPatient.id,action:"patient-status",status:patientState.value}); }
-        catch(error) { alert(error.message); patientState.value=linkedPatient.status || "Primera visita pendent"; }
+        try {
+          const updatedPatient = await savePatientChange({patientId:linkedPatient.id,action:"patient-status",status:patientState.value});
+          linkedPatient.status = updatedPatient.status;
+        } catch(error) { alert(error.message); patientState.value=linkedPatient.status || "Primera visita pendent"; }
         finally { patientState.disabled = false; }
       });
       item.append(createText("small","calendar-control-label","Estat del pacient"),patientState);
