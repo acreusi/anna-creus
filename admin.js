@@ -124,9 +124,24 @@ function renderSelectedDay() {
     else time.textContent = new Intl.DateTimeFormat("ca-ES", {
       timeZone: "Europe/Madrid", hour: "2-digit", minute: "2-digit", hourCycle: "h23"
     }).format(new Date(event.start));
-    const name = document.createElement("span");
+    const name = document.createElement("button");
+    name.type = "button";
+    name.className = "calendar-event-patient";
     name.textContent = event.summary || "Cita";
+    const linkedPatient = patientRecords.find(patient => (patient.appointments || []).some(appointment => appointment.eventId === event.id));
+    if (linkedPatient) {
+      name.addEventListener("click", async () => {
+        document.querySelector('[data-section="patients"]').click();
+        await loadPatients();
+        openPatient(linkedPatient.id);
+      });
+    } else {
+      name.disabled = true;
+      name.title = "Aquesta cita encara no està vinculada a cap fitxa.";
+    }
     item.append(time, name);
+    const appointment = linkedPatient?.appointments?.find(entry => entry.eventId === event.id);
+    if (appointment) item.append(createText("small", "calendar-event-status", appointment.status || "Programada"));
     calendarEvents.append(item);
   }
 }
