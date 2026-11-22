@@ -46,7 +46,8 @@ export async function onRequestPost({ request, env }) {
       const existingPatient = existingPatientRaw ? JSON.parse(existingPatientRaw) : null;
       const appointmentDate = parts.year + "-" + parts.month + "-" + parts.day;
       const appointmentTime = new Intl.DateTimeFormat("ca-ES", { timeZone, hour:"2-digit", minute:"2-digit", hourCycle:"h23" }).format(new Date(startMs));
-      const appointment = { date:appointmentDate, time:appointmentTime, type:existingPatient ? "Sessió de seguiment" : "Primera visita", status:"Programada", eventId:inserted.id };
+      const hasCompletedFirstVisit = Boolean(existingPatient && Array.isArray(existingPatient.appointments) && existingPatient.appointments.some(item => item.type === "Primera visita" && item.status === "Realitzada"));
+      const appointment = { date:appointmentDate, time:appointmentTime, type:hasCompletedFirstVisit ? "Sessió de seguiment" : "Primera visita", status:"Programada", eventId:inserted.id };
       const patient = existingPatient || {
         id: patientKey, name, email, age, modality: modality === "online" ? "Online" : "Presencial",
         status:"Primera visita pendent", created:appointmentDate, reason, appointments:[], notes:[]
