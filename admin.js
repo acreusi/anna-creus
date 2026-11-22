@@ -331,8 +331,17 @@ function renderPatientDetail() {
   const heading = document.createElement("div"); heading.className = "patient-profile-heading";
   const avatar = createText("span", "patient-avatar patient-avatar-large", patient.name.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase());
   const titleWrap = document.createElement("div");
-  titleWrap.append(createText("p", "eyebrow", "FITXA DE PACIENT"), createText("h2", "", patient.name), createText("span", "patient-status", patient.status));
-  heading.append(avatar, titleWrap);
+  titleWrap.append(createText("p", "eyebrow", "FITXA DE PACIENT"), createText("h2", "", patient.name));
+  const patientStatus = document.createElement("select"); patientStatus.className = "patient-status-select";
+  ["Primera visita pendent","En seguiment","Pendent de reprendre","Alta"].forEach(value => { const option=document.createElement("option"); option.value=value; option.textContent=value; patientStatus.append(option); });
+  patientStatus.value = patient.status || "Primera visita pendent";
+  patientStatus.addEventListener("change", async () => {
+    patientStatus.disabled = true;
+    try { await savePatientChange({action:"patient-status",status:patientStatus.value}); }
+    catch(error) { alert(error.message); patientStatus.value=patient.status || "Primera visita pendent"; }
+    finally { patientStatus.disabled = false; }
+  });
+  titleWrap.append(patientStatus); heading.append(avatar, titleWrap);
   patientDetail.append(heading);
 
   const columns = document.createElement("div"); columns.className = "patient-profile-grid";
@@ -352,8 +361,17 @@ function renderPatientDetail() {
   const appointmentList = document.createElement("div"); appointmentList.className = "patient-timeline";
   [...patient.appointments].sort((a,b)=>b.date.localeCompare(a.date)).forEach(appointment => {
     const item = document.createElement("div"); item.className = "timeline-item";
-    item.append(createText("strong","","" + safeDateLabel(appointment.date)),createText("span","",appointment.time + " · " + appointment.type),createText("small","",appointment.status));
-    appointmentList.append(item);
+    item.append(createText("strong","","" + safeDateLabel(appointment.date)),createText("span","",appointment.time + " · " + appointment.type));
+    const status = document.createElement("select"); status.className = "appointment-status-select";
+    ["Programada","Realitzada","No presentada","Cancel·lada"].forEach(value => { const option=document.createElement("option"); option.value=value; option.textContent=value; status.append(option); });
+    status.value = appointment.status || "Programada";
+    status.addEventListener("change", async () => {
+      status.disabled = true;
+      try { await savePatientChange({action:"appointment-status",eventId:appointment.eventId,status:status.value}); }
+      catch(error) { alert(error.message); status.value=appointment.status || "Programada"; }
+      finally { status.disabled = false; }
+    });
+    item.append(status); appointmentList.append(item);
   });
   if (!patient.appointments.length) appointmentList.append(createText("p","muted","Encara no hi ha visites registrades."));
   visits.append(createText("p","history-count",patient.appointments.length + (patient.appointments.length === 1 ? " visita en total" : " visites en total")));
