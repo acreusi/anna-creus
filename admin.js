@@ -141,7 +141,20 @@ function renderSelectedDay() {
     }
     item.append(time, name);
     const appointment = linkedPatient?.appointments?.find(entry => entry.eventId === event.id);
-    if (appointment) item.append(createText("small", "calendar-event-status", appointment.status || "Programada"));
+    if (appointment) {
+      const status = document.createElement("select"); status.className = "appointment-status-select calendar-appointment-status";
+      ["Programada","Realitzada","No presentada","Cancel·lada"].forEach(value => { const option=document.createElement("option"); option.value=value; option.textContent=value; status.append(option); });
+      status.value = appointment.status || "Programada";
+      status.addEventListener("change", async () => {
+        status.disabled = true;
+        try {
+          await savePatientChange({patientId:linkedPatient.id,action:"appointment-status",eventId:event.id,status:status.value});
+          calendarStatus.textContent = "Canvis desats";
+        } catch(error) { alert(error.message); status.value=appointment.status || "Programada"; }
+        finally { status.disabled = false; }
+      });
+      item.append(status);
+    }
     calendarEvents.append(item);
   }
 }
@@ -330,7 +343,7 @@ function openPatient(id) {
   renderPatientDetail();
 }
 async function savePatientChange(change) {
-  const response = await fetch("/api/admin/patient", {method:"PATCH",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify({patientId:activePatientId,...change})});
+  const response = await fetch("/api/admin/patient", {method:"PATCH",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify({...change,patientId:change.patientId || activePatientId})});
   const data = await response.json();
   if (response.status === 401) { showLogin(); throw new Error("La sessió ha caducat."); }
   if (!response.ok || !data.ok || !data.patient) throw new Error(data.message || "No s'han pogut desar els canvis.");
