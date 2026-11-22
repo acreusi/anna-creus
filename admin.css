@@ -8,3 +8,14 @@
 @media(max-width:700px){.patients-heading{align-items:flex-start;gap:12px;flex-direction:column}.patient-primary-button{align-self:flex-start}.prototype-notice{align-items:flex-start;flex-direction:column;gap:3px}.patient-fields,.patient-profile-grid{grid-template-columns:1fr}.patient-row{gap:9px;padding:12px}.patient-row-meta{max-width:115px}.patient-row-meta small{display:none}.patient-row-main strong{font-size:11px}.patient-avatar{width:36px;height:36px;flex-basis:36px}.patient-info-grid{gap:12px}.patient-form,.patient-card{padding:17px}.therapy-note-head{align-items:flex-start;flex-direction:column;gap:2px}}
 
 .therapy-note{padding:13px 15px;background:#f8faf8;border:1px solid #e8eeeb;border-radius:8px}.therapy-note-head{margin-bottom:5px}.therapy-note>p{padding:0 0 2px}.therapy-note:not(:first-child){margin-top:9px}.history-count{display:inline-block;margin:0 0 12px;font-size:10px;color:#71817e}
+/* Patient record actions and editable visit states */
+.patient-status-select,.appointment-status-select{width:max-content;max-width:100%;padding:6px 9px;border:1px solid var(--line);border-radius:7px;background:#fbfcfa;color:var(--ink);font:inherit;font-size:10px}
+.patient-status-select{margin-top:7px;font-weight:700}
+.calendar-appointment-status{margin-top:7px}
+.calendar-event-patient{display:block;border:0;padding:0;background:transparent;color:var(--ink);font:inherit;font-size:12px;text-align:left;text-decoration:underline;text-decoration-color:#b8cdca;text-underline-offset:3px;cursor:pointer}
+.calendar-event-patient:disabled{color:var(--ink);text-decoration:none;cursor:default}
+.calendar-event-status{font-size:10px;color:var(--muted)}
+.therapy-note-actions{display:flex;gap:12px;margin-top:10px}
+.note-action{border:0;background:transparent;padding:3px 0;color:#587879;font:inherit;font-size:10px;font-weight:700;cursor:pointer}
+.note-delete{color:#9a6660}
+.note-action:disabled{opacity:.5;cursor:wait}
