@@ -241,3 +241,155 @@ document.getElementById("calendarToday").addEventListener("click", () => {
 });
 
 checkSession();
+
+
+// Patient records — visual prototype only. No patient data is sent to or stored on a server.
+const demoPatients = [{
+  id: "demo-001",
+  name: "Júlia Serra (exemple)",
+  email: "julia.exemple@email.test",
+  age: 28,
+  modality: "Online",
+  status: "Primera visita pendent",
+  created: "2026-11-10",
+  reason: "Dificultats per gestionar l'ansietat en situacions laborals i sensació de preocupació constant.",
+  appointments: [{ date: "2026-11-10", time: "17:00", type: "Primera visita", status: "Programada" }],
+  notes: [{ date: "2026-11-10", title: "Primera visita · exemple", body: "Anotació fictícia per mostrar com es veuria el seguiment.\n\nObjectius inicials: explorar les situacions que generen malestar i identificar recursos d'afrontament." }]
+}];
+let patientRecords = demoPatients.map(patient => ({ ...patient, appointments: [...patient.appointments], notes: [...patient.notes] }));
+let activePatientId = null;
+
+const patientList = document.getElementById("patientList");
+const patientSearch = document.getElementById("patientSearch");
+const patientCount = document.getElementById("patientCount");
+const addPatientForm = document.getElementById("addPatientForm");
+const patientsListView = document.getElementById("patientsListView");
+const patientDetailView = document.getElementById("patientDetailView");
+const patientDetail = document.getElementById("patientDetail");
+
+function safeDateLabel(value) {
+  if (!value) return "Data no indicada";
+  const date = new Date(value + "T12:00:00");
+  return new Intl.DateTimeFormat("ca-ES", { day: "numeric", month: "long", year: "numeric" }).format(date);
+}
+function createText(tag, className, value) {
+  const element = document.createElement(tag);
+  if (className) element.className = className;
+  element.textContent = value ?? "";
+  return element;
+}
+function renderPatientList() {
+  const query = (patientSearch.value || "").trim().toLocaleLowerCase("ca");
+  const matches = patientRecords.filter(patient => (patient.name + " " + patient.email).toLocaleLowerCase("ca").includes(query));
+  patientList.replaceChildren();
+  patientCount.textContent = patientRecords.length + (patientRecords.length === 1 ? " pacient" : " pacients");
+  if (!matches.length) {
+    patientList.append(createText("p", "patient-empty-search", "No s'han trobat pacients amb aquesta cerca."));
+    return;
+  }
+  matches.forEach(patient => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "patient-row";
+    button.addEventListener("click", () => openPatient(patient.id));
+    const initials = patient.name.split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0]).join("").toUpperCase();
+    const avatar = createText("span", "patient-avatar", initials);
+    const main = document.createElement("span"); main.className = "patient-row-main";
+    main.append(createText("strong", "", patient.name), createText("small", "", patient.email || "Sense correu electrònic"));
+    const meta = document.createElement("span"); meta.className = "patient-row-meta";
+    meta.append(createText("span", "patient-status", patient.status), createText("small", "", "Última activitat: " + safeDateLabel(patient.notes.at(-1)?.date || patient.appointments.at(-1)?.date || patient.created)));
+    const arrow = createText("span", "patient-row-arrow", "→");
+    button.append(avatar, main, meta, arrow);
+    patientList.append(button);
+  });
+}
+function openPatient(id) {
+  const patient = patientRecords.find(item => item.id === id);
+  if (!patient) return;
+  activePatientId = id;
+  patientsListView.hidden = true;
+  patientDetailView.hidden = false;
+  renderPatientDetail();
+}
+function renderPatientDetail() {
+  const patient = patientRecords.find(item => item.id === activePatientId);
+  if (!patient) return;
+  patientDetail.replaceChildren();
+  const heading = document.createElement("div"); heading.className = "patient-profile-heading";
+  const avatar = createText("span", "patient-avatar patient-avatar-large", patient.name.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join("").toUpperCase());
+  const titleWrap = document.createElement("div");
+  titleWrap.append(createText("p", "eyebrow", "FITXA DE PACIENT"), createText("h2", "", patient.name), createText("span", "patient-status", patient.status));
+  heading.append(avatar, titleWrap);
+  patientDetail.append(heading);
+
+  const columns = document.createElement("div"); columns.className = "patient-profile-grid";
+  const info = document.createElement("section"); info.className = "patient-card";
+  info.append(createText("p", "eyebrow", "DADES PERSONALS"), createText("h3", "", "Informació general"));
+  const infoGrid = document.createElement("div"); infoGrid.className = "patient-info-grid";
+  [["Correu electrònic",patient.email || "No indicat"],["Edat",patient.age ? patient.age + " anys" : "No indicada"],["Modalitat",patient.modality || "No especificada"],["Fitxa creada",safeDateLabel(patient.created)]].forEach(([label,value]) => {
+    const item = document.createElement("div"); item.append(createText("small","",label),createText("strong","",value)); infoGrid.append(item);
+  });
+  info.append(infoGrid);
+  const reason = document.createElement("section"); reason.className = "patient-card";
+  reason.append(createText("p","eyebrow","INFORMACIÓ DE LA RESERVA"),createText("h3","","Motiu de consulta inicial"),createText("p","patient-reason",patient.reason || "No s'ha indicat cap motiu de consulta."));
+  columns.append(info,reason); patientDetail.append(columns);
+
+  const visits = document.createElement("section"); visits.className = "patient-card patient-history-card";
+  visits.append(createText("p","eyebrow","HISTORIAL"),createText("h3","","Cites i visites"));
+  const appointmentList = document.createElement("div"); appointmentList.className = "patient-timeline";
+  [...patient.appointments].sort((a,b)=>b.date.localeCompare(a.date)).forEach(appointment => {
+    const item = document.createElement("div"); item.className = "timeline-item";
+    item.append(createText("strong","","" + safeDateLabel(appointment.date)),createText("span","",appointment.time + " · " + appointment.type),createText("small","",appointment.status));
+    appointmentList.append(item);
+  });
+  if (!patient.appointments.length) appointmentList.append(createText("p","muted","Encara no hi ha visites registrades."));
+  visits.append(appointmentList); patientDetail.append(visits);
+
+  const therapy = document.createElement("section"); therapy.className = "patient-card therapy-card";
+  const therapyHead = document.createElement("div"); therapyHead.className = "therapy-heading";
+  therapyHead.append(createText("div","eyebrow","SEGUIMENT TERAPÈUTIC"),createText("h3","","Notes de les sessions"));
+  therapy.append(therapyHead);
+  const noteForm = document.createElement("form"); noteForm.className = "therapy-note-form"; noteForm.id = "therapyNoteForm";
+  const noteTitle = document.createElement("input"); noteTitle.name = "title"; noteTitle.placeholder = "Títol de la nota (p. ex. Sessió 2 · objectius)"; noteTitle.maxLength = 120; noteTitle.required = true;
+  const noteBody = document.createElement("textarea"); noteBody.name = "body"; noteBody.rows = 4; noteBody.maxLength = 10000; noteBody.placeholder = "Escriu aquí les observacions, temes treballats, intervencions, evolució, tasques…"; noteBody.required = true;
+  const noteActions = document.createElement("div"); noteActions.className = "patient-form-actions"; const saveNote = createText("button","","Afegir anotació"); saveNote.type = "submit"; saveNote.className = "patient-primary-button";
+  noteForm.append(noteTitle,noteBody,noteActions); noteActions.append(saveNote);
+  noteForm.addEventListener("submit", event => {
+    event.preventDefault();
+    const current = patientRecords.find(item => item.id === activePatientId);
+    if (!current) return;
+    const values = new FormData(noteForm);
+    current.notes.push({ date: new Date().toISOString().slice(0,10), title: String(values.get("title")).trim(), body: String(values.get("body")).trim() });
+    renderPatientDetail();
+  });
+  therapy.append(noteForm);
+  const notes = document.createElement("div"); notes.className = "therapy-notes";
+  [...patient.notes].sort((a,b)=>b.date.localeCompare(a.date)).forEach(note => {
+    const item = document.createElement("article"); item.className = "therapy-note";
+    const head = document.createElement("div"); head.className = "therapy-note-head";
+    head.append(createText("strong","",note.title),createText("time","",safeDateLabel(note.date)));
+    item.append(head,createText("p","",note.body)); notes.append(item);
+  });
+  if (!patient.notes.length) notes.append(createText("p","muted","Encara no hi ha anotacions. Pots afegir la primera sessió aquí."));
+  therapy.append(notes); patientDetail.append(therapy);
+}
+document.getElementById("addPatientToggle").addEventListener("click", () => { addPatientForm.hidden = !addPatientForm.hidden; });
+document.getElementById("closePatientForm").addEventListener("click", () => { addPatientForm.hidden = true; });
+addPatientForm.addEventListener("submit", event => {
+  event.preventDefault();
+  const values = new FormData(addPatientForm);
+  const name = String(values.get("name") || "").trim();
+  if (!name) return;
+  patientRecords.unshift({
+    id: "local-" + Date.now(), name, email: String(values.get("email") || "").trim(),
+    age: Number(values.get("age")) || null, modality: String(values.get("modality") || ""),
+    status: "Primera visita pendent", created: new Date().toISOString().slice(0,10),
+    reason: String(values.get("reason") || "").trim(), appointments: [], notes: []
+  });
+  addPatientForm.reset(); addPatientForm.hidden = true; renderPatientList();
+});
+patientSearch.addEventListener("input", renderPatientList);
+document.getElementById("backToPatients").addEventListener("click", () => {
+  activePatientId = null; patientDetailView.hidden = true; patientsListView.hidden = false;
+});
+renderPatientList();
