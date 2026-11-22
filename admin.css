@@ -24,3 +24,10 @@
 
 .calendar-control-label{display:block;margin-top:7px;font-size:9px;color:var(--muted);font-weight:700}
 .calendar-patient-status{display:block;margin-top:3px}
+
+/* Inline session note editor */
+.therapy-note-editor{display:grid;gap:10px;margin-top:4px}
+.therapy-note-editor input,.therapy-note-editor textarea{width:100%;border:1px solid var(--line);border-radius:7px;background:#fff;padding:11px 12px;color:var(--ink);font:inherit;font-size:12px;outline:none}
+.therapy-note-editor input:focus,.therapy-note-editor textarea:focus{border-color:var(--blue-dark);box-shadow:0 0 0 3px rgba(196,216,217,.3)}
+.therapy-note-editor textarea{resize:vertical;line-height:1.7}
+.therapy-note-editor-actions{display:flex;align-items:center;gap:14px;justify-content:flex-end}
