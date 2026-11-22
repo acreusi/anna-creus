@@ -39,6 +39,34 @@ export async function onRequestPost({ request, env }) {
       console.error("Could not save booking management token:", error?.message || "Unknown error");
       return json({ok:false,message:"No s'ha pogut completar la gestió segura de la reserva. Torna-ho a provar."},500);
     }
+    // Store the consultation reason and patient record only in the private KV store, never in Google Calendar.
+    try {
+      const patientKey = "patient:" + await hashToken(email.toLowerCase());
+      const existingPatientRaw = await env.GOOGLE_TOKEN_STORE.get(patientKey);
+      const existingPatient = existingPatientRaw ? JSON.parse(existingPatientRaw) : null;
+      const appointmentDate = parts.year + "-" + parts.month + "-" + parts.day;
+      const appointmentTime = new Intl.DateTimeFormat("ca-ES", { timeZone, hour:"2-digit", minute:"2-digit", hourCycle:"h23" }).format(new Date(startMs));
+      const appointment = { date:appointmentDate, time:appointmentTime, type:existingPatient ? "Sessió de seguiment" : "Primera visita", status:"Programada", eventId:inserted.id };
+      const patient = existingPatient || {
+        id: patientKey, name, email, age, modality: modality === "online" ? "Online" : "Presencial",
+        status:"Primera visita pendent", created:appointmentDate, reason, appointments:[], notes:[]
+      };
+      patient.name = name;
+      patient.email = email;
+      patient.age = age;
+      patient.modality = modality === "online" ? "Online" : "Presencial";
+      if (!patient.reason) patient.reason = reason;
+      patient.appointments = Array.isArray(patient.appointments) ? patient.appointments : [];
+      patient.appointments.push(appointment);
+      patient.notes = Array.isArray(patient.notes) ? patient.notes : [];
+      await env.GOOGLE_TOKEN_STORE.put(patientKey, JSON.stringify(patient));
+    } catch (error) {
+      await fetch("https://www.googleapis.com/calendar/v3/calendars/" + encodeURIComponent(calendarId) + "/events/" + encodeURIComponent(inserted.id), { method:"DELETE", headers:{ authorization:"Bearer " + td.access_token } });
+      await env.GOOGLE_TOKEN_STORE.delete(tokenKey);
+      console.error("Could not save private patient record:", error?.message || "Unknown error");
+      return json({ok:false,message:"No s'ha pogut desar la fitxa privada del pacient. Torna-ho a provar."},500);
+    }
+
     const manageUrl = new URL("/gestionar-cita.html", new URL(request.url).origin);
     manageUrl.searchParams.set("token", managementToken);
     // Resend test-mode delivery: onboarding@resend.dev can deliver only to a verified recipient.
