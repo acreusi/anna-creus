@@ -21,3 +21,6 @@
 .note-action:disabled{opacity:.5;cursor:wait}
 
 .history-toggle{margin:12px 0 2px;border:0;background:transparent;padding:5px 0;color:#587879;font:inherit;font-size:10px;font-weight:700;cursor:pointer}
+
+.calendar-control-label{display:block;margin-top:7px;font-size:9px;color:var(--muted);font-weight:700}
+.calendar-patient-status{display:block;margin-top:3px}
