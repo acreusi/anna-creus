@@ -286,7 +286,7 @@ document.getElementById("calendarToday").addEventListener("click", () => {
 checkSession();
 
 
-// Patient records — visual prototype only. No patient data is sent to or stored on a server.
+// Patient records are loaded and updated through authenticated private API endpoints.
 let patientRecords = [];
 let activePatientId = null;
 
