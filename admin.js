@@ -378,37 +378,40 @@ function renderPatientDetail() {
   visits.append(createText("p","eyebrow","HISTORIAL"),createText("h3","","Cites i visites"));
   const appointmentList = document.createElement("div"); appointmentList.className = "patient-timeline";
   const sortedAppointments = [...patient.appointments].sort((a,b)=>b.date.localeCompare(a.date));
-  let showAllVisits = false;
-  const renderAppointments = () => {
-    appointmentList.replaceChildren();
-    const visibleAppointments = showAllVisits ? sortedAppointments : sortedAppointments.slice(0,4);
-    visibleAppointments.forEach(appointment => {
-      const item = document.createElement("div"); item.className = "timeline-item";
-      item.append(createText("strong","","" + safeDateLabel(appointment.date)),createText("span","",appointment.time + " · " + appointment.type));
-      const status = document.createElement("select"); status.className = "appointment-status-select";
-      ["Programada","Realitzada","No presentada"].forEach(value => { const option=document.createElement("option"); option.value=value; option.textContent=value; status.append(option); });
-      status.value = appointment.status || "Programada";
-      status.addEventListener("change", async () => {
-        status.disabled = true;
-        try { await savePatientChange({action:"appointment-status",eventId:appointment.eventId,status:status.value}); renderPatientDetail(); }
-        catch(error) { alert(error.message); status.value=appointment.status || "Programada"; status.disabled=false; }
-      });
-      item.append(status); appointmentList.append(item);
+  sortedAppointments.forEach(appointment => {
+    const item = document.createElement("div"); item.className = "timeline-item";
+    const sessionButton = createText("button","session-note-link",safeDateLabel(appointment.date) + " · " + (appointment.time || "") + " · " + (appointment.type || "Sessió"));
+    sessionButton.type = "button";
+    sessionButton.addEventListener("click", () => {
+      const matchingNote = patient.notes.find(note => (appointment.eventId && note.appointmentEventId === appointment.eventId) || note.date === appointment.date);
+      if (matchingNote) {
+        const target = therapy.querySelector('[data-note-id="' + matchingNote.id + '"]');
+        if (target) {
+          target.scrollIntoView({behavior:"smooth",block:"center"});
+          target.classList.add("therapy-note-highlight");
+          setTimeout(() => target.classList.remove("therapy-note-highlight"), 1800);
+        }
+      } else {
+        noteDate.value = appointment.date;
+        noteTitle.value = appointment.type === "Primera visita" ? "Primera visita" : "Sessió de seguiment";
+        noteBody.focus();
+        noteForm.scrollIntoView({behavior:"smooth",block:"center"});
+      }
     });
-  };
+    item.append(sessionButton);
+    const status = document.createElement("select"); status.className = "appointment-status-select";
+    ["Programada","Realitzada","No presentada"].forEach(value => { const option=document.createElement("option"); option.value=value; option.textContent=value; status.append(option); });
+    status.value = appointment.status || "Programada";
+    status.addEventListener("change", async () => {
+      status.disabled = true;
+      try { await savePatientChange({action:"appointment-status",eventId:appointment.eventId,status:status.value}); renderPatientDetail(); }
+      catch(error) { alert(error.message); status.value=appointment.status || "Programada"; status.disabled=false; }
+    });
+    item.append(status); appointmentList.append(item);
+  });
   if (!sortedAppointments.length) appointmentList.append(createText("p","muted","Encara no hi ha visites registrades."));
-  visits.append(createText("p","history-count",sortedAppointments.length + (sortedAppointments.length === 1 ? " visita en total" : " visites en total")));
-  renderAppointments();
-  if (sortedAppointments.length > 4) {
-    const historyToggle = createText("button","history-toggle","Veure tot l'historial");
-    historyToggle.type = "button";
-    historyToggle.addEventListener("click", () => {
-      showAllVisits = !showAllVisits;
-      renderAppointments();
-      historyToggle.textContent = showAllVisits ? "Mostrar menys visites" : "Veure tot l'historial";
-    });
-    visits.append(historyToggle);
-  }
+  const completedVisits = sortedAppointments.filter(item => item.status === "Realitzada").length;
+  visits.append(createText("p","history-count",completedVisits + (completedVisits === 1 ? " sessió realitzada" : " sessions realitzades") + (sortedAppointments.length > completedVisits ? " · " + (sortedAppointments.length - completedVisits) + " pendents o no realitzades" : "")));
   visits.append(appointmentList); patientDetail.append(visits);
 
   const therapy = document.createElement("section"); therapy.className = "patient-card therapy-card";
@@ -416,16 +419,17 @@ function renderPatientDetail() {
   therapyHead.append(createText("div","eyebrow","SEGUIMENT TERAPÈUTIC"),createText("h3","","Notes de les sessions"));
   therapy.append(therapyHead);
   const noteForm = document.createElement("form"); noteForm.className = "therapy-note-form"; noteForm.id = "therapyNoteForm";
+  const noteDate = document.createElement("input"); noteDate.name = "date"; noteDate.type = "date"; noteDate.value = new Date().toISOString().slice(0,10); noteDate.required = true; noteDate.setAttribute("aria-label","Data de la sessió");
   const noteTitle = document.createElement("input"); noteTitle.name = "title"; noteTitle.placeholder = "Títol de la nota (p. ex. Sessió 2 · objectius)"; noteTitle.maxLength = 120; noteTitle.required = true;
   const noteBody = document.createElement("textarea"); noteBody.name = "body"; noteBody.rows = 4; noteBody.maxLength = 10000; noteBody.placeholder = "Escriu aquí les observacions, temes treballats, intervencions, evolució, tasques…"; noteBody.required = true;
   const noteActions = document.createElement("div"); noteActions.className = "patient-form-actions"; const saveNote = createText("button","","Afegir anotació"); saveNote.type = "submit"; saveNote.className = "patient-primary-button";
-  noteForm.append(noteTitle,noteBody,noteActions); noteActions.append(saveNote);
+  noteForm.append(noteDate,noteTitle,noteBody,noteActions); noteActions.append(saveNote);
   noteForm.addEventListener("submit", async event => {
     event.preventDefault();
     const values = new FormData(noteForm);
     saveNote.disabled = true;
     try {
-      await savePatientChange({action:"add-note",title:String(values.get("title")).trim(),body:String(values.get("body")).trim()});
+      await savePatientChange({action:"add-note",date:String(values.get("date")),title:String(values.get("title")).trim(),body:String(values.get("body")).trim()});
       renderPatientDetail();
     } catch(error) { alert(error.message); }
     finally { saveNote.disabled = false; }
@@ -433,7 +437,7 @@ function renderPatientDetail() {
   therapy.append(noteForm);
   const notes = document.createElement("div"); notes.className = "therapy-notes";
   [...patient.notes].sort((a,b)=>String(b.updatedAt || b.date || "").localeCompare(String(a.updatedAt || a.date || ""))).forEach(note => {
-    const item = document.createElement("article"); item.className = "therapy-note";
+    const item = document.createElement("article"); item.className = "therapy-note"; item.dataset.noteId = note.id; item.dataset.noteDate = note.date || "";
     const head = document.createElement("div"); head.className = "therapy-note-head";
     head.append(createText("strong","",note.title),createText("time","",safeDateLabel(note.date)));
     item.append(head,createText("p","",note.body));
