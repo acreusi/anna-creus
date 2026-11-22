@@ -343,6 +343,7 @@ function renderPatientDetail() {
     appointmentList.append(item);
   });
   if (!patient.appointments.length) appointmentList.append(createText("p","muted","Encara no hi ha visites registrades."));
+  visits.append(createText("p","history-count",patient.appointments.length + (patient.appointments.length === 1 ? " visita en total" : " visites en total")));
   visits.append(appointmentList); patientDetail.append(visits);
 
   const therapy = document.createElement("section"); therapy.className = "patient-card therapy-card";
