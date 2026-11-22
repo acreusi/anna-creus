@@ -24,14 +24,14 @@ export async function onRequestPost({ request, env }) {
     while(candidate+duration<=close&&guard++<12){const conflict=busy.filter(e=>candidate<e.end&&candidate+duration>e.start).sort((a,b)=>a.end-b.end)[0];if(conflict){candidate=conflict.end+600000;continue;}if(candidate===startMs){valid=true;break;}if(candidate>startMs)break;candidate+=duration;}
     if(!valid)return json({ok:false,message:"Aquesta hora ja no està disponible. Actualitza el calendari i tria una altra hora."},409);
     const eventId=crypto.randomUUID().replace(/-/g,"");
-    const event={id:eventId,summary:"Cita — "+name,description:"Contacte: "+email+"\nEdat de la persona que farà la visita: "+age+"\n\nResum del motiu de consulta: "+reason,visibility:"private",start:{dateTime:new Date(startMs).toISOString(),timeZone},end:{dateTime:new Date(startMs+duration).toISOString(),timeZone}};
+    const event={id:eventId,summary:"Cita — "+name,visibility:"private",start:{dateTime:new Date(startMs).toISOString(),timeZone},end:{dateTime:new Date(startMs+duration).toISOString(),timeZone}};
     const insert=await fetch("https://www.googleapis.com/calendar/v3/calendars/"+encodeURIComponent(calendarId)+"/events",{method:"POST",headers:{authorization:"Bearer "+td.access_token,"content-type":"application/json"},body:JSON.stringify(event)}),inserted=await insert.json();
     if(insert.status===409)return json({ok:false,message:"Una altra persona acaba de reservar aquesta hora. Actualitza el calendari i tria'n una altra."},409);
     if(!insert.ok)return json({ok:false,message:"Google Calendar no ha pogut desar la reserva."},502);
 
     const managementToken = await createToken();
     const tokenKey = "booking_token:" + await hashToken(managementToken);
-    const bookingRecord = { eventId:inserted.id, calendarId, startMs, name, email, age, modality, language:body.language === "es" ? "es" : "ca", status:"active", createdAt:Date.now() };
+    const bookingRecord = { eventId:inserted.id, calendarId, startMs, name, email, age, modality, reason, language:body.language === "es" ? "es" : "ca", status:"active", createdAt:Date.now() };
     try {
       await env.GOOGLE_TOKEN_STORE.put(tokenKey, JSON.stringify(bookingRecord), { expirationTtl:450 * 24 * 60 * 60 });
     } catch (error) {
