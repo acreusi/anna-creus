@@ -314,6 +314,16 @@ function openPatient(id) {
   patientDetailView.hidden = false;
   renderPatientDetail();
 }
+async function savePatientChange(change) {
+  const response = await fetch("/api/admin/patient", {method:"PATCH",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify({patientId:activePatientId,...change})});
+  const data = await response.json();
+  if (response.status === 401) { showLogin(); throw new Error("La sessió ha caducat."); }
+  if (!response.ok || !data.ok || !data.patient) throw new Error(data.message || "No s'han pogut desar els canvis.");
+  const index = patientRecords.findIndex(item => item.id === data.patient.id);
+  if (index >= 0) patientRecords[index] = data.patient;
+  renderPatientList();
+  return data.patient;
+}
 function renderPatientDetail() {
   const patient = patientRecords.find(item => item.id === activePatientId);
   if (!patient) return;
@@ -358,13 +368,15 @@ function renderPatientDetail() {
   const noteBody = document.createElement("textarea"); noteBody.name = "body"; noteBody.rows = 4; noteBody.maxLength = 10000; noteBody.placeholder = "Escriu aquí les observacions, temes treballats, intervencions, evolució, tasques…"; noteBody.required = true;
   const noteActions = document.createElement("div"); noteActions.className = "patient-form-actions"; const saveNote = createText("button","","Afegir anotació"); saveNote.type = "submit"; saveNote.className = "patient-primary-button";
   noteForm.append(noteTitle,noteBody,noteActions); noteActions.append(saveNote);
-  noteForm.addEventListener("submit", event => {
+  noteForm.addEventListener("submit", async event => {
     event.preventDefault();
-    const current = patientRecords.find(item => item.id === activePatientId);
-    if (!current) return;
     const values = new FormData(noteForm);
-    current.notes.push({ date: new Date().toISOString().slice(0,10), title: String(values.get("title")).trim(), body: String(values.get("body")).trim() });
-    renderPatientDetail();
+    saveNote.disabled = true;
+    try {
+      await savePatientChange({action:"add-note",title:String(values.get("title")).trim(),body:String(values.get("body")).trim()});
+      renderPatientDetail();
+    } catch(error) { alert(error.message); }
+    finally { saveNote.disabled = false; }
   });
   therapy.append(noteForm);
   const notes = document.createElement("div"); notes.className = "therapy-notes";
