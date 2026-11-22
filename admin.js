@@ -375,7 +375,7 @@ function renderPatientDetail() {
   columns.append(info,reason); patientDetail.append(columns);
 
   const visits = document.createElement("section"); visits.className = "patient-card patient-history-card";
-  visits.append(createText("p","eyebrow","HISTORIAL"),createText("h3","","Cites i visites"));
+  visits.append(createText("p","eyebrow","HISTORIAL"),createText("h3","","Visites recents"));
   const appointmentList = document.createElement("div"); appointmentList.className = "patient-timeline";
   const sortedAppointments = [...patient.appointments].sort((a,b)=>b.date.localeCompare(a.date));
   let showAllAppointments = false;
@@ -428,9 +428,11 @@ function renderPatientDetail() {
       renderAppointments();
       historyToggle.textContent = showAllAppointments ? "Amagar historial de visites" : "Historial de visites";
     });
-    visits.append(historyToggle);
+    visits.append(appointmentList, historyToggle);
+  } else {
+    visits.append(appointmentList);
   }
-  visits.append(appointmentList); patientDetail.append(visits);
+  patientDetail.append(visits);
 
   const therapy = document.createElement("section"); therapy.className = "patient-card therapy-card";
   const therapyHead = document.createElement("div"); therapyHead.className = "therapy-heading";
