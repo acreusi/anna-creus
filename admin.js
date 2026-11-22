@@ -379,6 +379,7 @@ function renderPatientDetail() {
   const appointmentList = document.createElement("div"); appointmentList.className = "patient-timeline";
   const sortedAppointments = [...patient.appointments].sort((a,b)=>b.date.localeCompare(a.date));
   let selectedAppointmentEventId = "";
+  let selectedAppointmentDate = "";
   sortedAppointments.forEach(appointment => {
     const item = document.createElement("div"); item.className = "timeline-item";
     const sessionButton = createText("button","session-note-link",safeDateLabel(appointment.date) + " · " + (appointment.time || "") + " · " + (appointment.type || "Sessió"));
@@ -394,6 +395,7 @@ function renderPatientDetail() {
         }
       } else {
         selectedAppointmentEventId = appointment.eventId || "";
+        selectedAppointmentDate = appointment.date;
         noteDate.value = appointment.date;
         noteTitle.value = appointment.type === "Primera visita" ? "Primera visita" : "Sessió de seguiment";
         noteBody.focus();
@@ -422,6 +424,7 @@ function renderPatientDetail() {
   therapy.append(therapyHead);
   const noteForm = document.createElement("form"); noteForm.className = "therapy-note-form"; noteForm.id = "therapyNoteForm";
   const noteDate = document.createElement("input"); noteDate.name = "date"; noteDate.type = "date"; noteDate.value = new Date().toISOString().slice(0,10); noteDate.required = true; noteDate.setAttribute("aria-label","Data de la sessió");
+  noteDate.addEventListener("change", () => { if (noteDate.value !== selectedAppointmentDate) selectedAppointmentEventId = ""; });
   const noteTitle = document.createElement("input"); noteTitle.name = "title"; noteTitle.placeholder = "Títol de la nota (p. ex. Sessió 2 · objectius)"; noteTitle.maxLength = 120; noteTitle.required = true;
   const noteBody = document.createElement("textarea"); noteBody.name = "body"; noteBody.rows = 4; noteBody.maxLength = 10000; noteBody.placeholder = "Escriu aquí les observacions, temes treballats, intervencions, evolució, tasques…"; noteBody.required = true;
   const noteActions = document.createElement("div"); noteActions.className = "patient-form-actions"; const saveNote = createText("button","","Afegir anotació"); saveNote.type = "submit"; saveNote.className = "patient-primary-button";
