@@ -148,7 +148,9 @@ function renderSelectedDay() {
       status.addEventListener("change", async () => {
         status.disabled = true;
         try {
-          await savePatientChange({patientId:linkedPatient.id,action:"appointment-status",eventId:event.id,status:status.value});
+          const updatedPatient = await savePatientChange({patientId:linkedPatient.id,action:"appointment-status",eventId:event.id,status:status.value});
+          linkedPatient.status = updatedPatient.status;
+          patientState.value = updatedPatient.status || linkedPatient.status;
           calendarStatus.textContent = "Canvis desats";
         } catch(error) { alert(error.message); status.value=appointment.status || "Programada"; }
         finally { status.disabled = false; }
