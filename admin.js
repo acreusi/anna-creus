@@ -378,9 +378,13 @@ function renderPatientDetail() {
   visits.append(createText("p","eyebrow","HISTORIAL"),createText("h3","","Cites i visites"));
   const appointmentList = document.createElement("div"); appointmentList.className = "patient-timeline";
   const sortedAppointments = [...patient.appointments].sort((a,b)=>b.date.localeCompare(a.date));
+  let showAllAppointments = false;
   let selectedAppointmentEventId = "";
   let selectedAppointmentDate = "";
-  sortedAppointments.forEach(appointment => {
+  const renderAppointments = () => {
+    appointmentList.replaceChildren();
+    const visibleAppointments = showAllAppointments ? sortedAppointments : sortedAppointments.slice(0,3);
+    visibleAppointments.forEach(appointment => {
     const item = document.createElement("div"); item.className = "timeline-item";
     const sessionButton = createText("button","session-note-link",safeDateLabel(appointment.date) + " · " + (appointment.time || "") + " · " + (appointment.type || "Sessió"));
     sessionButton.type = "button";
@@ -412,10 +416,20 @@ function renderPatientDetail() {
       catch(error) { alert(error.message); status.value=appointment.status || "Programada"; status.disabled=false; }
     });
     item.append(status); appointmentList.append(item);
-  });
-  if (!sortedAppointments.length) appointmentList.append(createText("p","muted","Encara no hi ha visites registrades."));
-  const completedVisits = sortedAppointments.filter(item => item.status === "Realitzada").length;
-  visits.append(createText("p","history-count",completedVisits + (completedVisits === 1 ? " sessió realitzada" : " sessions realitzades") + (sortedAppointments.length > completedVisits ? " · " + (sortedAppointments.length - completedVisits) + " pendents o no realitzades" : "")));
+    });
+    if (!sortedAppointments.length) appointmentList.append(createText("p","muted","Encara no hi ha visites registrades."));
+  };
+  renderAppointments();
+  if (sortedAppointments.length > 3) {
+    const historyToggle = createText("button","history-toggle","Historial de visites");
+    historyToggle.type = "button";
+    historyToggle.addEventListener("click", () => {
+      showAllAppointments = !showAllAppointments;
+      renderAppointments();
+      historyToggle.textContent = showAllAppointments ? "Amagar historial de visites" : "Historial de visites";
+    });
+    visits.append(historyToggle);
+  }
   visits.append(appointmentList); patientDetail.append(visits);
 
   const therapy = document.createElement("section"); therapy.className = "patient-card therapy-card";
