@@ -277,7 +277,6 @@ async function loadPatients() {
     if (!response.ok || !data.ok) throw new Error(data.message || "No s'han pogut carregar els pacients.");
     patientRecords = Array.isArray(data.patients) ? data.patients : [];
     renderPatientList();
-loadPatients();
   } catch (error) {
     patientList.replaceChildren(createText("p", "patient-empty-search", error.message || "No s'han pogut carregar els pacients."));
   }
@@ -398,3 +397,4 @@ document.getElementById("backToPatients").addEventListener("click", () => {
   activePatientId = null; patientDetailView.hidden = true; patientsListView.hidden = false;
 });
 renderPatientList();
+loadPatients();
